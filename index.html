@@ -35,6 +35,16 @@
     touch-action: manipulation;
   }
 
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
   h1 {
     font-family: 'Lora', serif;
     font-size: 12px;
@@ -42,9 +52,92 @@
     text-transform: uppercase;
     color: var(--muted);
     text-align: center;
-    padding-bottom: 8px;
+  }
+
+  #log-btn {
+    position: absolute;
+    right: 0;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 4px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #log-panel {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 200;
+    flex-direction: column;
+    padding: 16px;
+    gap: 10px;
+  }
+
+  #log-panel.visible { display: flex; }
+
+  #log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
     flex-shrink: 0;
+  }
+
+  #log-header span {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  #log-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 20px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #log-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .log-entry {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .log-time {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+
+  #log-clear {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .grid {
@@ -139,14 +232,50 @@
     transform: translateX(-50%);
   }
 
-  #overlay-text.custom {
-    top: 30%;
+  #overlay-response {
+    display: none;
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85vw;
+    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #overlay-response.visible { display: flex; }
+
+  #overlay-response input {
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 18px;
+    padding: 14px 16px;
+    outline: none;
+    text-align: center;
+  }
+
+  #overlay-response input::placeholder { color: var(--muted); }
+
+  #overlay-response-answer {
+    font-family: 'Lora', serif;
+    font-size: clamp(28px, 7vw, 56px);
+    color: var(--accent);
+    text-align: center;
+    line-height: 1.3;
+    min-height: 60px;
   }
 </style>
 </head>
 <body>
 
-<h1>Comunicación</h1>
+<div class="header">
+  <h1>Comunicación</h1>
+  <button id="log-btn" title="Historial">📋</button>
+</div>
 
 <div class="grid">
   <div class="btn" data-msg="¿Cómo te llamás?">¿Cómo te llamás?</div>
@@ -166,8 +295,21 @@
   <button id="send-custom">→</button>
 </div>
 
+<div id="log-panel">
+  <div id="log-header">
+    <span>Historial</span>
+    <button id="log-close">✕</button>
+  </div>
+  <div id="log-list"></div>
+  <button id="log-clear">Borrar historial</button>
+</div>
+
 <div id="overlay">
   <div id="overlay-text"></div>
+  <div id="overlay-response">
+    <div id="overlay-response-answer"></div>
+    <input id="overlay-response-input" type="text" placeholder="Escribí la respuesta…" maxlength="100">
+  </div>
 </div>
 
 <script>
@@ -175,12 +317,75 @@
   const overlayText = document.getElementById('overlay-text');
   const customInput = document.getElementById('custom-input');
 
+  const logPanel = document.getElementById('log-panel');
+  const logList = document.getElementById('log-list');
+  const log = [];
+
+  function addLog(msg) {
+    const now = new Date();
+    const time = now.toLocaleTimeString('es-AR', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+    const date = now.toLocaleDateString('es-AR');
+    log.unshift({msg, time, date});
+  }
+
+  function renderLog() {
+    logList.innerHTML = log.length === 0
+      ? '<div style="color:var(--muted);font-size:13px;text-align:center;margin-top:20px">Sin actividad aún</div>'
+      : log.map(e => `<div class="log-entry"><div class="log-time">${e.date} ${e.time}</div>${e.msg}</div>`).join('');
+  }
+
+  document.getElementById('log-btn').addEventListener('click', () => {
+    renderLog();
+    logPanel.classList.add('visible');
+  });
+
+  document.getElementById('log-close').addEventListener('click', () => {
+    logPanel.classList.remove('visible');
+  });
+
+  document.getElementById('log-clear').addEventListener('click', () => {
+    log.length = 0;
+    renderLog();
+  });
+
+  const overlayResponse = document.getElementById('overlay-response');
+  const overlayResponseInput = document.getElementById('overlay-response-input');
+  const overlayResponseAnswer = document.getElementById('overlay-response-answer');
+
+  const RESPONSE_MSGS = ['¿Cómo te llamás?', '¿Qué vas a hacer?'];
+
   function showMessage(msg, isCustom) {
+    addLog(msg);
     overlayText.textContent = msg;
     overlayText.classList.toggle('custom', !!isCustom);
     overlay.classList.add('visible');
     customInput.blur();
+
+    if (RESPONSE_MSGS.includes(msg)) {
+      overlayResponseAnswer.textContent = '';
+      overlayResponseInput.value = '';
+      overlayResponse.classList.add('visible');
+      setTimeout(() => overlayResponseInput.focus(), 100);
+    } else {
+      overlayResponse.classList.remove('visible');
+    }
   }
+
+  overlayResponseInput.addEventListener('input', () => {
+    overlayResponseAnswer.textContent = overlayResponseInput.value;
+  });
+
+  overlayResponseInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = overlayResponseInput.value.trim();
+      if (val) addLog('↩ ' + val);
+      hideOverlay();
+    }
+  });
+
+  // Prevent overlay click-to-close when tapping input
+  overlayResponseInput.addEventListener('click', e => e.stopPropagation());
 
   function hideOverlay() {
     overlay.classList.remove('visible');
