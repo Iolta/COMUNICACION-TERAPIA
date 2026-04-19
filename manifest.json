@@ -5,11 +5,11 @@
   "display": "standalone",
   "background_color": "#0d0f0e",
   "theme_color": "#0d0f0e",
-  "icons": [
-    {
-      "src": "https://iolta.github.io/COMUNICACION-TERAPIA/1776601940427.png"
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
-}
+"icons": [
+  {
+    "src": "https://iolta.github.io/COMUNICACION-TERAPIA/1776601940427.png",
+    "sizes": "512x512",
+    "type": "image/png",
+    "purpose": "any maskable"
+  }
+]
