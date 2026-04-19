@@ -1,1 +1,15 @@
-{ "name": "Comunicación Terapia", "short_name": "Comunicación", "description": "Herramienta de comunicación para terapia en ICU", "start_url": "/COMUNICACION-TERAPIA/icu-comm.html", "display": "standalone", "background_color": "#0d0f0e", "theme_color": "#c8d8c2", "orientation": "portrait-primary", "scope": "/COMUNICACION-TERAPIA/", "icons": [ { "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230d0f0e' width='192' height='192'/><text x='50%' y='50%' font-size='80' fill='%23c8d8c2' text-anchor='middle' dominant-baseline='middle' font-family='serif' font-weight='bold'>C</text></svg>", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" }, { "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230d0f0e' width='192' height='192'/><text x='50%' y='50%' font-size='80' fill='%23c8d8c2' text-anchor='middle' dominant-baseline='middle' font-family='serif' font-weight='bold'>C</text></svg>", "sizes": "192x192", "type": "image/svg+xml", "purpose": "maskable" } ], "categories": ["medical", "productivity"], "screenshots": [ { "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%230d0f0e' width='540' height='720'/><text x='270' y='360' font-size='60' fill='%23c8d8c2' text-anchor='middle' dominant-baseline='middle' font-family='sans-serif'>Comunicación</text></svg>", "sizes": "540x720", "type": "image/svg+xml", "form_factor": "narrow" } ] }
+{
+  "name": "Comunicación",
+  "short_name": "Comunicación",
+  "start_url": "/COMUNICACION-TERAPIA/",
+  "display": "standalone",
+  "background_color": "#0d0f0e",
+  "theme_color": "#0d0f0e",
+  "icons": [
+    {
+      "src": "1776601940427.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
