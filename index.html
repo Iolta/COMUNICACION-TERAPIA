@@ -320,13 +320,18 @@
 
   const logPanel = document.getElementById('log-panel');
   const logList = document.getElementById('log-list');
-  const log = [];
+  let log = JSON.parse(localStorage.getItem('comm-log') || '[]');
+
+  function saveLog() {
+    localStorage.setItem('comm-log', JSON.stringify(log));
+  }
 
   function addLog(msg) {
     const now = new Date();
     const time = now.toLocaleTimeString('es-AR', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
     const date = now.toLocaleDateString('es-AR');
     log.unshift({msg, time, date});
+    saveLog();
   }
 
   function renderLog() {
@@ -345,7 +350,8 @@
   });
 
   document.getElementById('log-clear').addEventListener('click', () => {
-    log.length = 0;
+    log = [];
+    saveLog();
     renderLog();
   });
 
