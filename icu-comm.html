@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Comunicación</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Source+Sans+3:wght@400;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f0e;
+    --surface: #1a1d1b;
+    --border: #2e3330;
+    --text: #e8ede9;
+    --muted: #7a8a7e;
+    --accent: #c8d8c2;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 8px;
+    touch-action: manipulation;
+  }
+
+  h1 {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .btn:active {
+    background: #252a27;
+    border-color: var(--accent);
+  }
+
+  .custom-area {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+    flex-shrink: 0;
+    height: 64px;
+  }
+
+  .custom-area input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 15px;
+    padding: 10px 14px;
+    outline: none;
+    line-height: 1.4;
+  }
+
+  .custom-area input:focus { border-color: var(--accent); }
+  .custom-area input::placeholder { color: var(--muted); }
+
+  .custom-area button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--accent);
+    font-size: 22px;
+    padding: 0 18px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #0a0c0b;
+    z-index: 100;
+  }
+
+  #overlay.visible { display: block; }
+
+  #overlay-text {
+    font-family: 'Lora', serif;
+    font-size: clamp(32px, 8vw, 64px);
+    color: #e8ede9;
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    max-width: 90vw;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  #overlay-text.custom {
+    top: 30%;
+  }
+</style>
+</head>
+<body>
+
+<h1>Comunicación</h1>
+
+<div class="grid">
+  <div class="btn" data-msg="¿Cómo te llamás?">¿Cómo te llamás?</div>
+  <div class="btn" data-msg="¿Qué vas a hacer?">¿Qué vas a hacer?</div>
+  <div class="btn" data-msg="¿Podés llamar a la kinesióloga?">Llamar a kinesióloga</div>
+  <div class="btn" data-msg="¿Podés llamar al médico?">Llamar al médico</div>
+  <div class="btn" data-msg="¿Cómo ves todo?">¿Cómo ves todo?</div>
+  <div class="btn" data-msg="Necesito ayuda">Necesito ayuda</div>
+  <div class="btn" data-msg="Tengo dolor">Tengo dolor</div>
+  <div class="btn" data-msg="Tengo frío / calor">Frío / Calor</div>
+  <div class="btn" data-msg="Necesito agua">Necesito agua</div>
+  <div class="btn" data-msg="Necesito ir al baño">Baño</div>
+</div>
+
+<div class="custom-area">
+  <input id="custom-input" type="text" placeholder="Mensaje personalizado…" maxlength="200">
+  <button id="send-custom">→</button>
+</div>
+
+<div id="overlay">
+  <div id="overlay-text"></div>
+</div>
+
+<script>
+  const overlay = document.getElementById('overlay');
+  const overlayText = document.getElementById('overlay-text');
+  const customInput = document.getElementById('custom-input');
+
+  function showMessage(msg, isCustom) {
+    overlayText.textContent = msg;
+    overlayText.classList.toggle('custom', !!isCustom);
+    overlay.classList.add('visible');
+    customInput.blur();
+  }
+
+  function hideOverlay() {
+    overlay.classList.remove('visible');
+    customInput.value = '';
+    customInput.focus();
+  }
+
+  document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('click', () => showMessage(btn.dataset.msg));
+  });
+
+  overlay.addEventListener('click', hideOverlay);
+
+  function sendCustom() {
+    const val = customInput.value.trim();
+    if (val) showMessage(val, true);
+  }
+
+  document.getElementById('send-custom').addEventListener('click', sendCustom);
+
+  customInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendCustom();
+    }
+  });
+</script>
+</body>
+</html>
