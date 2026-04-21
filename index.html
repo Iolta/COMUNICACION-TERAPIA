@@ -21,6 +21,8 @@
   }
 
   html, body { height: 100%; overflow: hidden; }
+  body.panel-open { overflow: auto; }
+  body.panel-open html { overflow: auto; }
 
   body {
     background: var(--bg);
@@ -549,8 +551,14 @@
 
   // Nursing panel
   const nursingPanel = document.getElementById('nursing-panel');
-  document.getElementById('nursing-btn').addEventListener('click', () => nursingPanel.classList.add('visible'));
-  document.getElementById('nursing-close').addEventListener('click', () => nursingPanel.classList.remove('visible'));
+  document.getElementById('nursing-btn').addEventListener('click', () => {
+    nursingPanel.classList.add('visible');
+    document.body.classList.add('panel-open');
+  });
+  document.getElementById('nursing-close').addEventListener('click', () => {
+    nursingPanel.classList.remove('visible');
+    document.body.classList.remove('panel-open');
+  });
 
   document.querySelectorAll('.nursing-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -593,8 +601,15 @@
       </div>`).join('');
   }
 
-  document.getElementById('log-btn').addEventListener('click', () => { renderLog(); logPanel.classList.add('visible'); });
-  document.getElementById('log-close').addEventListener('click', () => logPanel.classList.remove('visible'));
+  document.getElementById('log-btn').addEventListener('click', () => { 
+    renderLog(); 
+    logPanel.classList.add('visible');
+    document.body.classList.add('panel-open');
+  });
+  document.getElementById('log-close').addEventListener('click', () => {
+    logPanel.classList.remove('visible');
+    document.body.classList.remove('panel-open');
+  });
   document.getElementById('log-clear').addEventListener('click', () => { log = []; saveLog(); renderLog(); });
 
   // Overlay
