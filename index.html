@@ -80,12 +80,9 @@
   #nursing-panel {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: #0e1210;
-    z-index: 1000;
+    z-index: 200;
     flex-direction: column;
     padding: 16px;
     gap: 10px;
@@ -167,12 +164,9 @@
   #log-panel {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: var(--bg);
-    z-index: 1000;
+    z-index: 200;
     flex-direction: column;
     padding: 16px;
     gap: 10px;
@@ -222,6 +216,11 @@
     background: #1f1d13;
   }
   .log-entry.highlighted .log-msg { color: var(--highlight); font-weight: 600; }
+  .log-entry.nursing {
+    border-color: #6aab8a;
+    background: #0f1a14;
+  }
+  .log-entry.nursing .log-msg { color: #6aab8a; font-weight: 600; }
   .log-time {
     font-size: 13px;
     color: var(--accent);
@@ -553,7 +552,7 @@
 
   document.querySelectorAll('.nursing-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      addLog(btn.textContent, null, true);
+      addLog(btn.textContent, null, false, true);
       btn.classList.add('tapped');
       setTimeout(() => btn.classList.remove('tapped'), 800);
     });
@@ -571,11 +570,11 @@
 
   function saveLog() { localStorage.setItem('comm-log', JSON.stringify(log)); }
 
-  function addLog(msg, response, isHighlight) {
+  function addLog(msg, response, isHighlight, isNursing) {
     const now = new Date();
     const time = now.toLocaleTimeString('es-AR', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
     const date = now.toLocaleDateString('es-AR');
-    log.unshift({msg, response: response || null, time, date, highlight: !!isHighlight});
+    log.unshift({msg, response: response || null, time, date, highlight: !!isHighlight, nursing: !!isNursing});
     saveLog();
   }
 
@@ -585,7 +584,7 @@
       return;
     }
     logList.innerHTML = log.map(e => `
-      <div class="log-entry ${e.highlight ? 'highlighted' : ''}">
+      <div class="log-entry ${e.nursing ? 'nursing' : e.highlight ? 'highlighted' : ''}">
         <div class="log-time">${e.date} — ${e.time}</div>
         <div class="log-msg">${e.msg}</div>
         ${e.response ? `<div class="log-response">↩ ${e.response}</div>` : ''}
