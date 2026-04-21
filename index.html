@@ -53,7 +53,102 @@
     text-align: center;
   }
 
+  #nursing-btn {
+    position: absolute;
+    right: 0;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 4px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
   #log-btn {
+    position: absolute;
+    left: 0;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 4px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #nursing-panel {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #0e1210;
+    z-index: 200;
+    flex-direction: column;
+    padding: 16px;
+    gap: 10px;
+  }
+  #nursing-panel.visible { display: flex; }
+
+  #nursing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    flex-shrink: 0;
+  }
+  #nursing-header span {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  #nursing-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 20px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .nursing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .nursing-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .nursing-btn:active {
+    background: #1a1f1a;
+    border-color: #e8c87a;
+  }
+  .nursing-btn.tapped {
+    border-color: #e8c87a;
+    background: #1f1d13;
+    color: #e8c87a;
+  }
     position: absolute;
     right: 0;
     background: none;
@@ -351,6 +446,7 @@
 <div class="header">
   <h1>Comunicación</h1>
   <button id="log-btn" title="Historial">📋</button>
+  <button id="nursing-btn" title="Enfermería">✅</button>
 </div>
 
 <div class="grid">
@@ -367,6 +463,23 @@
 <div class="custom-area">
   <input id="custom-input" type="text" placeholder="Mensaje personalizado…" maxlength="200">
   <button id="send-custom">→</button>
+</div>
+
+<div id="nursing-panel">
+  <div id="nursing-header">
+    <span>Registro enfermería</span>
+    <button id="nursing-close">✕</button>
+  </div>
+  <div class="nursing-grid">
+    <div class="nursing-btn">Enfermería general</div>
+    <div class="nursing-btn">Baño / Higiene</div>
+    <div class="nursing-btn">Controles generales</div>
+    <div class="nursing-btn">Cambio de posición</div>
+    <div class="nursing-btn">Extracción de muestra</div>
+    <div class="nursing-btn">Medicación</div>
+    <div class="nursing-btn">Suero / Vía</div>
+    <div class="nursing-btn">Control de signos</div>
+  </div>
 </div>
 
 <div id="log-panel">
@@ -426,6 +539,19 @@
     });
   }
   applyLabels();
+
+  // Nursing panel
+  const nursingPanel = document.getElementById('nursing-panel');
+  document.getElementById('nursing-btn').addEventListener('click', () => nursingPanel.classList.add('visible'));
+  document.getElementById('nursing-close').addEventListener('click', () => nursingPanel.classList.remove('visible'));
+
+  document.querySelectorAll('.nursing-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      addLog(btn.textContent, null, true);
+      btn.classList.add('tapped');
+      setTimeout(() => btn.classList.remove('tapped'), 800);
+    });
+  });
 
   // Log
   const overlay = document.getElementById('overlay');
