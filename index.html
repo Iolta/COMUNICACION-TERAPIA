@@ -17,12 +17,10 @@
     --text: #e8ede9;
     --muted: #7a8a7e;
     --accent: #c8d8c2;
+    --highlight: #e8c87a;
   }
 
-  html, body {
-    height: 100%;
-    overflow: hidden;
-  }
+  html, body { height: 100%; overflow: hidden; }
 
   body {
     background: var(--bg);
@@ -67,6 +65,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Log panel */
   #log-panel {
     display: none;
     position: fixed;
@@ -77,7 +76,6 @@
     padding: 16px;
     gap: 10px;
   }
-
   #log-panel.visible { display: flex; }
 
   #log-header {
@@ -88,7 +86,6 @@
     padding-bottom: 8px;
     flex-shrink: 0;
   }
-
   #log-header span {
     font-family: 'Lora', serif;
     font-size: 12px;
@@ -96,7 +93,6 @@
     text-transform: uppercase;
     color: var(--muted);
   }
-
   #log-close {
     background: none;
     border: none;
@@ -105,7 +101,6 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
-
   #log-list {
     flex: 1;
     overflow-y: auto;
@@ -113,22 +108,32 @@
     flex-direction: column;
     gap: 6px;
   }
-
   .log-entry {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px 12px;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.4;
   }
-
-  .log-time {
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 2px;
+  .log-entry.highlighted {
+    border-color: var(--highlight);
+    background: #1f1d13;
   }
-
+  .log-entry.highlighted .log-msg { color: var(--highlight); font-weight: 600; }
+  .log-time {
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 4px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .log-response {
+    font-size: 16px;
+    color: var(--text);
+    margin-top: 4px;
+    font-weight: 600;
+  }
   #log-clear {
     background: none;
     border: 1px solid var(--border);
@@ -141,6 +146,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Grid */
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -167,13 +173,26 @@
     transition: background 0.15s, border-color 0.15s;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
+    position: relative;
+  }
+  .btn:active { background: #252a27; border-color: var(--accent); }
+  .btn.editing {
+    border-color: var(--highlight);
+    background: #1f1d13;
+  }
+  .btn input.edit-input {
+    background: none;
+    border: none;
+    color: var(--highlight);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    width: 100%;
+    outline: none;
   }
 
-  .btn:active {
-    background: #252a27;
-    border-color: var(--accent);
-  }
-
+  /* Custom area */
   .custom-area {
     display: flex;
     gap: 8px;
@@ -181,7 +200,6 @@
     flex-shrink: 0;
     height: 64px;
   }
-
   .custom-area input {
     flex: 1;
     background: var(--surface);
@@ -194,10 +212,8 @@
     outline: none;
     line-height: 1.4;
   }
-
   .custom-area input:focus { border-color: var(--accent); }
   .custom-area input::placeholder { color: var(--muted); }
-
   .custom-area button {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -209,6 +225,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Overlay */
   #overlay {
     display: none;
     position: fixed;
@@ -216,9 +233,7 @@
     background: #0a0c0b;
     z-index: 100;
   }
-
   #overlay.visible { display: block; }
-
   #overlay-text {
     font-family: 'Lora', serif;
     font-size: clamp(32px, 8vw, 64px);
@@ -232,6 +247,7 @@
     left: 50%;
     transform: translateX(-50%);
   }
+  #overlay-text.custom { top: 30%; }
 
   #overlay-response {
     display: none;
@@ -244,9 +260,7 @@
     flex-direction: column;
     align-items: stretch;
   }
-
   #overlay-response.visible { display: flex; }
-
   #overlay-response input {
     background: var(--surface);
     border: 1px solid var(--accent);
@@ -258,16 +272,77 @@
     outline: none;
     text-align: center;
   }
-
   #overlay-response input::placeholder { color: var(--muted); }
-
   #overlay-response-answer {
     font-family: 'Lora', serif;
     font-size: clamp(28px, 7vw, 56px);
-    color: var(--accent);
+    color: var(--highlight);
     text-align: center;
     line-height: 1.3;
     min-height: 60px;
+  }
+
+  /* Edit modal */
+  #edit-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+  }
+  #edit-modal.visible { display: flex; }
+  #edit-box {
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+    padding: 20px;
+    width: 85vw;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  #edit-box label {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  #edit-box input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 16px;
+    padding: 12px 14px;
+    outline: none;
+  }
+  #edit-box input:focus { border-color: var(--accent); }
+  #edit-actions {
+    display: flex;
+    gap: 8px;
+  }
+  #edit-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #edit-confirm {
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+    border-color: var(--accent);
+  }
+  #edit-cancel {
+    background: none;
+    color: var(--muted);
   }
 </style>
 </head>
@@ -279,16 +354,14 @@
 </div>
 
 <div class="grid">
-  <div class="btn" data-msg="¿Cómo te llamás?">¿Cómo te llamás?</div>
-  <div class="btn" data-msg="¿Qué vas a hacer?">¿Qué vas a hacer?</div>
-  <div class="btn" data-msg="¿Podés llamar a la kinesióloga?">Llamar a kinesióloga</div>
-  <div class="btn" data-msg="¿Podés llamar al médico?">Llamar al médico</div>
-  <div class="btn" data-msg="¿Cómo ves todo?">¿Cómo ves todo?</div>
-  <div class="btn" data-msg="Necesito ayuda">Necesito ayuda</div>
-  <div class="btn" data-msg="Tengo dolor">Tengo dolor</div>
-  <div class="btn" data-msg="Tengo frío / calor">Frío / Calor</div>
-  <div class="btn" data-msg="Necesito agua">Necesito agua</div>
-  <div class="btn" data-msg="Necesito ir al baño">Baño</div>
+  <div class="btn" data-msg="¿Cómo te llamás?" data-key="btn0">¿Cómo te llamás?</div>
+  <div class="btn" data-msg="¿Qué vas a hacer?" data-key="btn1">¿Qué vas a hacer?</div>
+  <div class="btn" data-msg="Temperatura" data-key="btn2">Temperatura</div>
+  <div class="btn" data-msg="Luz" data-key="btn3">Luz</div>
+  <div class="btn" data-msg="¿Podés llamar a la kinesióloga?" data-key="btn4">Llamar a kinesióloga</div>
+  <div class="btn" data-msg="¿Podés llamar al médico?" data-key="btn5">Llamar al médico</div>
+  <div class="btn" data-msg="Necesito agua" data-key="btn6">Necesito agua</div>
+  <div class="btn" data-msg="Tengo dolor" data-key="btn7">Tengo dolor</div>
 </div>
 
 <div class="custom-area">
@@ -313,68 +386,108 @@
   </div>
 </div>
 
+<div id="edit-modal">
+  <div id="edit-box">
+    <label>Editar botón (solo esta sesión)</label>
+    <input id="edit-input" type="text" maxlength="80">
+    <div id="edit-actions">
+      <button id="edit-cancel">Cancelar</button>
+      <button id="edit-confirm">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <script>
+  // Defaults
+  const DEFAULTS = {
+    btn0: { label: '¿Cómo te llamás?',            msg: '¿Cómo te llamás?' },
+    btn1: { label: '¿Qué vas a hacer?',            msg: '¿Qué vas a hacer?' },
+    btn2: { label: 'Temperatura',                  msg: 'Temperatura' },
+    btn3: { label: 'Luz',                          msg: 'Luz' },
+    btn4: { label: 'Llamar a kinesióloga',         msg: '¿Podés llamar a la kinesióloga?' },
+    btn5: { label: 'Llamar al médico',             msg: '¿Podés llamar al médico?' },
+    btn6: { label: 'Necesito agua',               msg: 'Necesito agua' },
+    btn7: { label: 'Tengo dolor',                  msg: 'Tengo dolor' }
+  };
+
+  // Session overrides (reset on reload)
+  const session = {};
+
+  function getBtn(key) {
+    return session[key] || DEFAULTS[key];
+  }
+
+  // Apply session labels to buttons
+  function applyLabels() {
+    document.querySelectorAll('.btn').forEach(btn => {
+      const key = btn.dataset.key;
+      btn.textContent = getBtn(key).label;
+      btn.dataset.msg = getBtn(key).msg;
+    });
+  }
+  applyLabels();
+
+  // Log
   const overlay = document.getElementById('overlay');
   const overlayText = document.getElementById('overlay-text');
   const customInput = document.getElementById('custom-input');
-
   const logPanel = document.getElementById('log-panel');
   const logList = document.getElementById('log-list');
   let log = JSON.parse(localStorage.getItem('comm-log') || '[]');
 
-  function saveLog() {
-    localStorage.setItem('comm-log', JSON.stringify(log));
-  }
+  const RESPONSE_KEYS = ['btn0', 'btn1'];
 
-  function addLog(msg) {
+  function saveLog() { localStorage.setItem('comm-log', JSON.stringify(log)); }
+
+  function addLog(msg, response, isHighlight) {
     const now = new Date();
     const time = now.toLocaleTimeString('es-AR', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
     const date = now.toLocaleDateString('es-AR');
-    log.unshift({msg, time, date});
+    log.unshift({msg, response: response || null, time, date, highlight: !!isHighlight});
     saveLog();
   }
 
   function renderLog() {
-    logList.innerHTML = log.length === 0
-      ? '<div style="color:var(--muted);font-size:13px;text-align:center;margin-top:20px">Sin actividad aún</div>'
-      : log.map(e => `<div class="log-entry"><div class="log-time">${e.date} ${e.time}</div>${e.msg}</div>`).join('');
+    if (log.length === 0) {
+      logList.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;margin-top:20px">Sin actividad aún</div>';
+      return;
+    }
+    logList.innerHTML = log.map(e => `
+      <div class="log-entry ${e.highlight ? 'highlighted' : ''}">
+        <div class="log-time">${e.date} — ${e.time}</div>
+        <div class="log-msg">${e.msg}</div>
+        ${e.response ? `<div class="log-response">↩ ${e.response}</div>` : ''}
+      </div>`).join('');
   }
 
-  document.getElementById('log-btn').addEventListener('click', () => {
-    renderLog();
-    logPanel.classList.add('visible');
-  });
+  document.getElementById('log-btn').addEventListener('click', () => { renderLog(); logPanel.classList.add('visible'); });
+  document.getElementById('log-close').addEventListener('click', () => logPanel.classList.remove('visible'));
+  document.getElementById('log-clear').addEventListener('click', () => { log = []; saveLog(); renderLog(); });
 
-  document.getElementById('log-close').addEventListener('click', () => {
-    logPanel.classList.remove('visible');
-  });
-
-  document.getElementById('log-clear').addEventListener('click', () => {
-    log = [];
-    saveLog();
-    renderLog();
-  });
-
+  // Overlay
   const overlayResponse = document.getElementById('overlay-response');
   const overlayResponseInput = document.getElementById('overlay-response-input');
   const overlayResponseAnswer = document.getElementById('overlay-response-answer');
+  let currentResponseMsg = null;
+  let currentIsHighlight = false;
 
-  const RESPONSE_MSGS = ['¿Cómo te llamás?', '¿Qué vas a hacer?'];
-
-  function showMessage(msg, isCustom) {
-    addLog(msg);
+  function showMessage(msg, isCustom, isHighlight) {
+    currentResponseMsg = msg;
+    currentIsHighlight = !!isHighlight;
     overlayText.textContent = msg;
     overlayText.classList.toggle('custom', !!isCustom);
     overlay.classList.add('visible');
+    document.activeElement && document.activeElement.blur();
     customInput.blur();
 
-    if (RESPONSE_MSGS.includes(msg)) {
+    if (isHighlight) {
       overlayResponseAnswer.textContent = '';
       overlayResponseInput.value = '';
       overlayResponse.classList.add('visible');
       setTimeout(() => overlayResponseInput.focus(), 100);
     } else {
       overlayResponse.classList.remove('visible');
+      addLog(msg, null, false);
     }
   }
 
@@ -386,36 +499,96 @@
     if (e.key === 'Enter') {
       e.preventDefault();
       const val = overlayResponseInput.value.trim();
-      if (val) addLog('↩ ' + val);
+      addLog(currentResponseMsg, val || null, true);
       hideOverlay();
     }
   });
-
-  // Prevent overlay click-to-close when tapping input
   overlayResponseInput.addEventListener('click', e => e.stopPropagation());
 
   function hideOverlay() {
     overlay.classList.remove('visible');
+    overlayResponse.classList.remove('visible');
     customInput.value = '';
-    customInput.focus();
   }
 
-  document.querySelectorAll('.btn').forEach(btn => {
-    btn.addEventListener('click', () => showMessage(btn.dataset.msg));
+  overlay.addEventListener('click', () => {
+    if (currentIsHighlight) {
+      const val = overlayResponseInput.value.trim();
+      addLog(currentResponseMsg, val || null, true);
+    }
+    hideOverlay();
   });
 
-  overlay.addEventListener('click', hideOverlay);
+  // Buttons: tap = show, long press = edit
+  document.querySelectorAll('.btn').forEach(btn => {
+    let pressTimer = null;
+    let didLongPress = false;
 
-  function sendCustom() {
-    const val = customInput.value.trim();
-    if (val) showMessage(val, true);
+    btn.addEventListener('pointerdown', () => {
+      didLongPress = false;
+      pressTimer = setTimeout(() => {
+        didLongPress = true;
+        openEditModal(btn);
+      }, 600);
+    });
+
+    btn.addEventListener('pointerup', () => {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    });
+
+    btn.addEventListener('pointercancel', () => {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    });
+
+    btn.addEventListener('click', () => {
+      if (didLongPress) return;
+      const key = btn.dataset.key;
+      const isHL = RESPONSE_KEYS.includes(key);
+      showMessage(btn.dataset.msg, false, isHL);
+    });
+  });
+
+  // Edit modal
+  const editModal = document.getElementById('edit-modal');
+  const editInput = document.getElementById('edit-input');
+  let editingBtn = null;
+
+  function openEditModal(btn) {
+    editingBtn = btn;
+    editInput.value = btn.textContent;
+    editModal.classList.add('visible');
+    setTimeout(() => editInput.focus(), 100);
   }
 
-  document.getElementById('send-custom').addEventListener('click', sendCustom);
+  document.getElementById('edit-confirm').addEventListener('click', () => {
+    if (editingBtn && editInput.value.trim()) {
+      const val = editInput.value.trim();
+      const key = editingBtn.dataset.key;
+      session[key] = { label: val, msg: val };
+      editingBtn.textContent = val;
+      editingBtn.dataset.msg = val;
+    }
+    editModal.classList.remove('visible');
+  });
 
+  document.getElementById('edit-cancel').addEventListener('click', () => {
+    editModal.classList.remove('visible');
+  });
+
+  // Custom send
+  function sendCustom() {
+    const val = customInput.value.trim();
+    if (val) showMessage(val, true, false);
+  }
+  document.getElementById('send-custom').addEventListener('click', sendCustom);
   customInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
+    if (e.key === 'Enter') { e.preventDefault(); sendCustom(); }
+  });
+  customInput.addEventListener('input', () => {
+    if (customInput.value.includes('\n')) {
+      customInput.value = customInput.value.replace(/\n/g, '');
       sendCustom();
     }
   });
