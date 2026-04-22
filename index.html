@@ -77,7 +77,8 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .grid {
+  #attention-btn { color: var(--muted); border-color: #3a3f3c; }
+  #attention-btn:active { border-color: var(--muted); }
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
@@ -384,7 +385,7 @@
   <div class="btn" data-msg="Luz" data-key="btn3">Luz</div>
   <div class="btn" data-msg="¿Podés llamar a la kinesióloga?" data-key="btn4">Llamar a kinesióloga</div>
   <div class="btn" data-msg="¿Podés llamar al médico?" data-key="btn5">Llamar al médico</div>
-  <div class="btn" data-msg="Necesito agua" data-key="btn6">Necesito agua</div>
+  <div id="attention-btn" class="btn">Timbre</div>
   <div class="btn" data-msg="Tengo dolor" data-key="btn7">Tengo dolor</div>
 </div>
 
@@ -443,7 +444,32 @@
 </div>
 
 <script>
-  const DEFAULTS = {
+  // Attention button - wood knock sound
+  (function() {
+    const btn = document.getElementById('attention-btn');
+    function playKnock() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) {
+        const t = i / ctx.sampleRate;
+        data[i] = Math.exp(-t * 40) * (Math.random() * 2 - 1) * 0.8;
+      }
+      const src = ctx.createBufferSource();
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 400;
+      filter.Q.value = 0.8;
+      src.buffer = buf;
+      src.connect(filter);
+      filter.connect(ctx.destination);
+      src.start();
+    }
+    btn.addEventListener('click', () => {
+      playKnock();
+      setTimeout(playKnock, 180);
+    });
+  })();
     btn0: { label: '¿Cómo te llamás?',           msg: '¿Cómo te llamás?' },
     btn1: { label: '¿Qué vas a hacer?',           msg: '¿Qué vas a hacer?' },
     btn2: { label: 'Temperatura',                 msg: 'Temperatura' },
