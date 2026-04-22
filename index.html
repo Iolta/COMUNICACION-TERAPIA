@@ -21,8 +21,6 @@
   }
 
   html, body { height: 100%; overflow: hidden; }
-  body.panel-open { overflow: auto; }
-  body.panel-open html { overflow: auto; }
 
   body {
     background: var(--bg);
@@ -55,18 +53,6 @@
     text-align: center;
   }
 
-  #nursing-btn {
-    position: absolute;
-    right: 0;
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 16px;
-    cursor: pointer;
-    padding: 2px 4px;
-    -webkit-tap-highlight-color: transparent;
-  }
-
   #log-btn {
     position: absolute;
     left: 0;
@@ -79,79 +65,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  #nursing-panel {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: #0e1210;
-    z-index: 9999;
-    flex-direction: column;
-    padding: 16px;
-    gap: 10px;
-    overflow: hidden;
-  }
-  #nursing-panel.visible { display: flex; }
-
-  #nursing-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 8px;
-    flex-shrink: 0;
-  }
-  #nursing-header span {
-    font-family: 'Lora', serif;
-    font-size: 12px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  #nursing-close {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 20px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .nursing-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    flex: 1;
-    min-height: 0;
-  }
-
-  .nursing-btn {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 10px;
-    cursor: pointer;
-    text-align: center;
-    line-height: 1.3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 12px;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .nursing-btn:active {
-    background: #1a1f1a;
-    border-color: #e8c87a;
-  }
-  .nursing-btn.tapped {
-    border-color: #e8c87a;
-    background: #1f1d13;
-    color: #e8c87a;
-  }
+  #nursing-btn {
     position: absolute;
     right: 0;
     background: none;
@@ -163,94 +77,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Log panel */
-  #log-panel {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    z-index: 9999;
-    flex-direction: column;
-    padding: 16px;
-    gap: 10px;
-    overflow: hidden;
-  }
-  #log-panel.visible { display: flex; }
-
-  #log-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 8px;
-    flex-shrink: 0;
-  }
-  #log-header span {
-    font-family: 'Lora', serif;
-    font-size: 12px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  #log-close {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 20px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-  #log-list {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .log-entry {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 15px;
-    line-height: 1.4;
-  }
-  .log-entry.highlighted {
-    border-color: var(--highlight);
-    background: #1f1d13;
-  }
-  .log-entry.highlighted .log-msg { color: var(--highlight); font-weight: 600; }
-  .log-entry.nursing {
-    border-color: #6aab8a;
-    background: #0f1a14;
-  }
-  .log-entry.nursing .log-msg { color: #6aab8a; font-weight: 600; }
-  .log-time {
-    font-size: 13px;
-    color: var(--accent);
-    margin-bottom: 4px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-  .log-response {
-    font-size: 16px;
-    color: var(--text);
-    margin-top: 4px;
-    font-weight: 600;
-  }
-  #log-clear {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--muted);
-    font-size: 13px;
-    padding: 10px;
-    cursor: pointer;
-    flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /* Grid */
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -277,26 +103,9 @@
     transition: background 0.15s, border-color 0.15s;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
-    position: relative;
   }
   .btn:active { background: #252a27; border-color: var(--accent); }
-  .btn.editing {
-    border-color: var(--highlight);
-    background: #1f1d13;
-  }
-  .btn input.edit-input {
-    background: none;
-    border: none;
-    color: var(--highlight);
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    width: 100%;
-    outline: none;
-  }
 
-  /* Custom area */
   .custom-area {
     display: flex;
     gap: 8px;
@@ -314,7 +123,6 @@
     font-size: 15px;
     padding: 10px 14px;
     outline: none;
-    line-height: 1.4;
   }
   .custom-area input:focus { border-color: var(--accent); }
   .custom-area input::placeholder { color: var(--muted); }
@@ -327,6 +135,129 @@
     padding: 0 18px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Panels — shared base */
+  .panel {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    flex-direction: column;
+    padding: 16px;
+    gap: 10px;
+  }
+  .panel.visible { display: flex; }
+
+  #log-panel { background: var(--bg); }
+  #nursing-panel { background: #0f1310; }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    flex-shrink: 0;
+  }
+  .panel-header span {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .panel-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 20px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Log list */
+  #log-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .log-entry {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .log-entry.highlighted {
+    border-color: var(--highlight);
+    background: #1f1d13;
+  }
+  .log-entry.highlighted .log-msg { color: var(--highlight); font-weight: 600; }
+  .log-entry.nursing {
+    border-color: #5a9e78;
+    background: #0f1a14;
+  }
+  .log-entry.nursing .log-msg { color: #5a9e78; font-weight: 600; }
+  .log-time {
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 4px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .log-response {
+    font-size: 16px;
+    color: var(--text);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+  #log-clear {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Nursing grid */
+  .nursing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+  }
+  .nursing-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .nursing-btn:active, .nursing-btn.tapped {
+    background: #0f1a14;
+    border-color: #5a9e78;
+    color: #5a9e78;
   }
 
   /* Overlay */
@@ -352,7 +283,6 @@
     transform: translateX(-50%);
   }
   #overlay-text.custom { top: 30%; }
-
   #overlay-response {
     display: none;
     position: absolute;
@@ -424,10 +354,7 @@
     outline: none;
   }
   #edit-box input:focus { border-color: var(--accent); }
-  #edit-actions {
-    display: flex;
-    gap: 8px;
-  }
+  #edit-actions { display: flex; gap: 8px; }
   #edit-actions button {
     flex: 1;
     padding: 12px;
@@ -438,24 +365,16 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
-  #edit-confirm {
-    background: var(--accent);
-    color: var(--bg);
-    font-weight: 600;
-    border-color: var(--accent);
-  }
-  #edit-cancel {
-    background: none;
-    color: var(--muted);
-  }
+  #edit-confirm { background: var(--accent); color: var(--bg); font-weight: 600; border-color: var(--accent); }
+  #edit-cancel { background: none; color: var(--muted); }
 </style>
 </head>
 <body>
 
 <div class="header">
+  <button id="log-btn">📋</button>
   <h1>Comunicación</h1>
-  <button id="log-btn" title="Historial">📋</button>
-  <button id="nursing-btn" title="Enfermería">✅</button>
+  <button id="nursing-btn">✅</button>
 </div>
 
 <div class="grid">
@@ -474,10 +393,21 @@
   <button id="send-custom">→</button>
 </div>
 
-<div id="nursing-panel">
-  <div id="nursing-header">
-    <span>Registro enfermería</span>
-    <button id="nursing-close">✕</button>
+<!-- Log panel -->
+<div id="log-panel" class="panel">
+  <div class="panel-header">
+    <span>Historial</span>
+    <button class="panel-close" id="log-close">✕</button>
+  </div>
+  <div id="log-list"></div>
+  <button id="log-clear">Borrar historial</button>
+</div>
+
+<!-- Nursing panel -->
+<div id="nursing-panel" class="panel">
+  <div class="panel-header">
+    <span>Enfermería</span>
+    <button class="panel-close" id="nursing-close">✕</button>
   </div>
   <div class="nursing-grid">
     <div class="nursing-btn">Enfermería general</div>
@@ -491,15 +421,7 @@
   </div>
 </div>
 
-<div id="log-panel">
-  <div id="log-header">
-    <span>Historial</span>
-    <button id="log-close">✕</button>
-  </div>
-  <div id="log-list"></div>
-  <button id="log-clear">Borrar historial</button>
-</div>
-
+<!-- Message overlay -->
 <div id="overlay">
   <div id="overlay-text"></div>
   <div id="overlay-response">
@@ -508,6 +430,7 @@
   </div>
 </div>
 
+<!-- Edit modal -->
 <div id="edit-modal">
   <div id="edit-box">
     <label>Editar botón (solo esta sesión)</label>
@@ -520,114 +443,82 @@
 </div>
 
 <script>
-  // Defaults
   const DEFAULTS = {
-    btn0: { label: '¿Cómo te llamás?',            msg: '¿Cómo te llamás?' },
-    btn1: { label: '¿Qué vas a hacer?',            msg: '¿Qué vas a hacer?' },
-    btn2: { label: 'Temperatura',                  msg: 'Temperatura' },
-    btn3: { label: 'Luz',                          msg: 'Luz' },
-    btn4: { label: 'Llamar a kinesióloga',         msg: '¿Podés llamar a la kinesióloga?' },
-    btn5: { label: 'Llamar al médico',             msg: '¿Podés llamar al médico?' },
+    btn0: { label: '¿Cómo te llamás?',           msg: '¿Cómo te llamás?' },
+    btn1: { label: '¿Qué vas a hacer?',           msg: '¿Qué vas a hacer?' },
+    btn2: { label: 'Temperatura',                 msg: 'Temperatura' },
+    btn3: { label: 'Luz',                         msg: 'Luz' },
+    btn4: { label: 'Llamar a kinesióloga',        msg: '¿Podés llamar a la kinesióloga?' },
+    btn5: { label: 'Llamar al médico',            msg: '¿Podés llamar al médico?' },
     btn6: { label: 'Necesito agua',               msg: 'Necesito agua' },
-    btn7: { label: 'Tengo dolor',                  msg: 'Tengo dolor' }
+    btn7: { label: 'Tengo dolor',                 msg: 'Tengo dolor' }
   };
-
-  // Session overrides (reset on reload)
   const session = {};
-
-  function getBtn(key) {
-    return session[key] || DEFAULTS[key];
-  }
-
-  // Apply session labels to buttons
+  function getBtn(key) { return session[key] || DEFAULTS[key]; }
   function applyLabels() {
     document.querySelectorAll('.btn').forEach(btn => {
-      const key = btn.dataset.key;
-      btn.textContent = getBtn(key).label;
-      btn.dataset.msg = getBtn(key).msg;
+      const d = getBtn(btn.dataset.key);
+      btn.textContent = d.label;
+      btn.dataset.msg = d.msg;
     });
   }
   applyLabels();
 
-  // Nursing panel
-  const nursingPanel = document.getElementById('nursing-panel');
-  document.getElementById('nursing-btn').addEventListener('click', () => {
-    nursingPanel.classList.add('visible');
-    document.body.classList.add('panel-open');
-  });
-  document.getElementById('nursing-close').addEventListener('click', () => {
-    nursingPanel.classList.remove('visible');
-    document.body.classList.remove('panel-open');
-  });
+  // Log
+  let log = JSON.parse(localStorage.getItem('comm-log') || '[]');
+  function saveLog() { localStorage.setItem('comm-log', JSON.stringify(log)); }
+  function addLog(msg, response, isHighlight, isNursing) {
+    const now = new Date();
+    const time = now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    const date = now.toLocaleDateString('es-AR');
+    log.unshift({msg, response: response||null, time, date, highlight:!!isHighlight, nursing:!!isNursing});
+    saveLog();
+  }
+  function renderLog() {
+    const el = document.getElementById('log-list');
+    if (!log.length) { el.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;margin-top:20px">Sin actividad aún</div>'; return; }
+    el.innerHTML = log.map(e => `
+      <div class="log-entry ${e.nursing?'nursing':e.highlight?'highlighted':''}">
+        <div class="log-time">${e.date} — ${e.time}</div>
+        <div class="log-msg">${e.msg}</div>
+        ${e.response?`<div class="log-response">↩ ${e.response}</div>`:''}
+      </div>`).join('');
+  }
+
+  // Panel helpers
+  function openPanel(id) { document.getElementById(id).classList.add('visible'); }
+  function closePanel(id) { document.getElementById(id).classList.remove('visible'); }
+
+  document.getElementById('log-btn').addEventListener('click', () => { renderLog(); openPanel('log-panel'); });
+  document.getElementById('log-close').addEventListener('click', () => closePanel('log-panel'));
+  document.getElementById('log-clear').addEventListener('click', () => { log=[]; saveLog(); renderLog(); });
+  document.getElementById('nursing-btn').addEventListener('click', () => openPanel('nursing-panel'));
+  document.getElementById('nursing-close').addEventListener('click', () => closePanel('nursing-panel'));
 
   document.querySelectorAll('.nursing-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       addLog(btn.textContent, null, false, true);
       btn.classList.add('tapped');
-      setTimeout(() => btn.classList.remove('tapped'), 800);
+      setTimeout(() => btn.classList.remove('tapped'), 600);
     });
   });
 
-  // Log
+  // Overlay
   const overlay = document.getElementById('overlay');
   const overlayText = document.getElementById('overlay-text');
-  const customInput = document.getElementById('custom-input');
-  const logPanel = document.getElementById('log-panel');
-  const logList = document.getElementById('log-list');
-  let log = JSON.parse(localStorage.getItem('comm-log') || '[]');
-
-  const RESPONSE_KEYS = ['btn0', 'btn1'];
-
-  function saveLog() { localStorage.setItem('comm-log', JSON.stringify(log)); }
-
-  function addLog(msg, response, isHighlight, isNursing) {
-    const now = new Date();
-    const time = now.toLocaleTimeString('es-AR', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
-    const date = now.toLocaleDateString('es-AR');
-    log.unshift({msg, response: response || null, time, date, highlight: !!isHighlight, nursing: !!isNursing});
-    saveLog();
-  }
-
-  function renderLog() {
-    if (log.length === 0) {
-      logList.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;margin-top:20px">Sin actividad aún</div>';
-      return;
-    }
-    logList.innerHTML = log.map(e => `
-      <div class="log-entry ${e.nursing ? 'nursing' : e.highlight ? 'highlighted' : ''}">
-        <div class="log-time">${e.date} — ${e.time}</div>
-        <div class="log-msg">${e.msg}</div>
-        ${e.response ? `<div class="log-response">↩ ${e.response}</div>` : ''}
-      </div>`).join('');
-  }
-
-  document.getElementById('log-btn').addEventListener('click', () => { 
-    renderLog(); 
-    logPanel.classList.add('visible');
-    document.body.classList.add('panel-open');
-  });
-  document.getElementById('log-close').addEventListener('click', () => {
-    logPanel.classList.remove('visible');
-    document.body.classList.remove('panel-open');
-  });
-  document.getElementById('log-clear').addEventListener('click', () => { log = []; saveLog(); renderLog(); });
-
-  // Overlay
   const overlayResponse = document.getElementById('overlay-response');
   const overlayResponseInput = document.getElementById('overlay-response-input');
   const overlayResponseAnswer = document.getElementById('overlay-response-answer');
-  let currentResponseMsg = null;
-  let currentIsHighlight = false;
+  const customInput = document.getElementById('custom-input');
+  const RESPONSE_KEYS = ['btn0','btn1'];
+  let currentMsg = null, currentIsHighlight = false;
 
   function showMessage(msg, isCustom, isHighlight) {
-    currentResponseMsg = msg;
-    currentIsHighlight = !!isHighlight;
+    currentMsg = msg; currentIsHighlight = !!isHighlight;
     overlayText.textContent = msg;
     overlayText.classList.toggle('custom', !!isCustom);
     overlay.classList.add('visible');
     document.activeElement && document.activeElement.blur();
-    customInput.blur();
-
     if (isHighlight) {
       overlayResponseAnswer.textContent = '';
       overlayResponseInput.value = '';
@@ -635,111 +526,53 @@
       setTimeout(() => overlayResponseInput.focus(), 100);
     } else {
       overlayResponse.classList.remove('visible');
-      addLog(msg, null, false);
+      addLog(msg, null, false, false);
     }
   }
 
-  overlayResponseInput.addEventListener('input', () => {
-    overlayResponseAnswer.textContent = overlayResponseInput.value;
-  });
-
+  overlayResponseInput.addEventListener('input', () => { overlayResponseAnswer.textContent = overlayResponseInput.value; });
   overlayResponseInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const val = overlayResponseInput.value.trim();
-      addLog(currentResponseMsg, val || null, true);
-      hideOverlay();
-    }
+    if (e.key === 'Enter') { e.preventDefault(); const v = overlayResponseInput.value.trim(); addLog(currentMsg, v||null, true, false); hideOverlay(); }
   });
   overlayResponseInput.addEventListener('click', e => e.stopPropagation());
 
   function hideOverlay() {
+    if (currentIsHighlight) { const v = overlayResponseInput.value.trim(); addLog(currentMsg, v||null, true, false); }
     overlay.classList.remove('visible');
     overlayResponse.classList.remove('visible');
     customInput.value = '';
   }
+  overlay.addEventListener('click', hideOverlay);
 
-  overlay.addEventListener('click', () => {
-    if (currentIsHighlight) {
-      const val = overlayResponseInput.value.trim();
-      addLog(currentResponseMsg, val || null, true);
-    }
-    hideOverlay();
-  });
-
-  // Buttons: tap = show, long press = edit
+  // Main buttons
   document.querySelectorAll('.btn').forEach(btn => {
-    let pressTimer = null;
-    let didLongPress = false;
-
-    btn.addEventListener('pointerdown', () => {
-      didLongPress = false;
-      pressTimer = setTimeout(() => {
-        didLongPress = true;
-        openEditModal(btn);
-      }, 600);
-    });
-
-    btn.addEventListener('pointerup', () => {
-      clearTimeout(pressTimer);
-      pressTimer = null;
-    });
-
-    btn.addEventListener('pointercancel', () => {
-      clearTimeout(pressTimer);
-      pressTimer = null;
-    });
-
+    let pressTimer = null, didLong = false;
+    btn.addEventListener('pointerdown', () => { didLong=false; pressTimer=setTimeout(()=>{didLong=true; openEditModal(btn);},600); });
+    btn.addEventListener('pointerup', () => { clearTimeout(pressTimer); pressTimer=null; });
+    btn.addEventListener('pointercancel', () => { clearTimeout(pressTimer); pressTimer=null; });
     btn.addEventListener('click', () => {
-      if (didLongPress) return;
-      const key = btn.dataset.key;
-      const isHL = RESPONSE_KEYS.includes(key);
+      if (didLong) return;
+      const isHL = RESPONSE_KEYS.includes(btn.dataset.key);
       showMessage(btn.dataset.msg, false, isHL);
     });
   });
+
+  // Custom send
+  function sendCustom() { const v=customInput.value.trim(); if(v) showMessage(v,true,false); }
+  document.getElementById('send-custom').addEventListener('click', sendCustom);
+  customInput.addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();sendCustom();} });
+  customInput.addEventListener('input', () => { if(customInput.value.includes('\n')){customInput.value=customInput.value.replace(/\n/g,'');sendCustom();} });
 
   // Edit modal
   const editModal = document.getElementById('edit-modal');
   const editInput = document.getElementById('edit-input');
   let editingBtn = null;
-
-  function openEditModal(btn) {
-    editingBtn = btn;
-    editInput.value = btn.textContent;
-    editModal.classList.add('visible');
-    setTimeout(() => editInput.focus(), 100);
-  }
-
+  function openEditModal(btn) { editingBtn=btn; editInput.value=btn.textContent; editModal.classList.add('visible'); setTimeout(()=>editInput.focus(),100); }
   document.getElementById('edit-confirm').addEventListener('click', () => {
-    if (editingBtn && editInput.value.trim()) {
-      const val = editInput.value.trim();
-      const key = editingBtn.dataset.key;
-      session[key] = { label: val, msg: val };
-      editingBtn.textContent = val;
-      editingBtn.dataset.msg = val;
-    }
+    if (editingBtn && editInput.value.trim()) { const v=editInput.value.trim(); session[editingBtn.dataset.key]={label:v,msg:v}; editingBtn.textContent=v; editingBtn.dataset.msg=v; }
     editModal.classList.remove('visible');
   });
-
-  document.getElementById('edit-cancel').addEventListener('click', () => {
-    editModal.classList.remove('visible');
-  });
-
-  // Custom send
-  function sendCustom() {
-    const val = customInput.value.trim();
-    if (val) showMessage(val, true, false);
-  }
-  document.getElementById('send-custom').addEventListener('click', sendCustom);
-  customInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); sendCustom(); }
-  });
-  customInput.addEventListener('input', () => {
-    if (customInput.value.includes('\n')) {
-      customInput.value = customInput.value.replace(/\n/g, '');
-      sendCustom();
-    }
-  });
+  document.getElementById('edit-cancel').addEventListener('click', () => editModal.classList.remove('visible'));
 </script>
 </body>
 </html>
