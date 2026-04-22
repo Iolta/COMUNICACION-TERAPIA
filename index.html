@@ -77,8 +77,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  #attention-btn { color: var(--muted); border-color: #3a3f3c; }
-  #attention-btn:active { border-color: var(--muted); }
+  .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
@@ -106,6 +105,8 @@
     user-select: none;
   }
   .btn:active { background: #252a27; border-color: var(--accent); }
+  .btn.timbre { color: var(--muted); border-color: #3a3f3c; }
+  .btn.timbre:active { border-color: var(--muted); }
 
   .custom-area {
     display: flex;
@@ -138,7 +139,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Panels — shared base */
   .panel {
     display: none;
     position: fixed;
@@ -149,7 +149,6 @@
     gap: 10px;
   }
   .panel.visible { display: flex; }
-
   #log-panel { background: var(--bg); }
   #nursing-panel { background: #0f1310; }
 
@@ -177,7 +176,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Log list */
   #log-list {
     flex: 1;
     overflow-y: auto;
@@ -193,29 +191,12 @@
     font-size: 15px;
     line-height: 1.4;
   }
-  .log-entry.highlighted {
-    border-color: var(--highlight);
-    background: #1f1d13;
-  }
+  .log-entry.highlighted { border-color: var(--highlight); background: #1f1d13; }
   .log-entry.highlighted .log-msg { color: var(--highlight); font-weight: 600; }
-  .log-entry.nursing {
-    border-color: #5a9e78;
-    background: #0f1a14;
-  }
+  .log-entry.nursing { border-color: #5a9e78; background: #0f1a14; }
   .log-entry.nursing .log-msg { color: #5a9e78; font-weight: 600; }
-  .log-time {
-    font-size: 13px;
-    color: var(--accent);
-    margin-bottom: 4px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-  .log-response {
-    font-size: 16px;
-    color: var(--text);
-    margin-top: 4px;
-    font-weight: 600;
-  }
+  .log-time { font-size: 13px; color: var(--accent); margin-bottom: 4px; font-weight: 600; letter-spacing: 0.05em; }
+  .log-response { font-size: 16px; color: var(--text); margin-top: 4px; font-weight: 600; }
   #log-clear {
     background: none;
     border: 1px solid var(--border);
@@ -228,7 +209,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Nursing grid */
   .nursing-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -255,20 +235,9 @@
     user-select: none;
     transition: background 0.15s, border-color 0.15s;
   }
-  .nursing-btn:active, .nursing-btn.tapped {
-    background: #0f1a14;
-    border-color: #5a9e78;
-    color: #5a9e78;
-  }
+  .nursing-btn:active, .nursing-btn.tapped { background: #0f1a14; border-color: #5a9e78; color: #5a9e78; }
 
-  /* Overlay */
-  #overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: #0a0c0b;
-    z-index: 100;
-  }
+  #overlay { display: none; position: fixed; inset: 0; background: #0a0c0b; z-index: 100; }
   #overlay.visible { display: block; }
   #overlay-text {
     font-family: 'Lora', serif;
@@ -317,55 +286,14 @@
     min-height: 60px;
   }
 
-  /* Edit modal */
-  #edit-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 300;
-    align-items: center;
-    justify-content: center;
-  }
+  #edit-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; align-items: center; justify-content: center; }
   #edit-modal.visible { display: flex; }
-  #edit-box {
-    background: var(--surface);
-    border: 1px solid var(--accent);
-    border-radius: 14px;
-    padding: 20px;
-    width: 85vw;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  #edit-box label {
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  #edit-box input {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 16px;
-    padding: 12px 14px;
-    outline: none;
-  }
+  #edit-box { background: var(--surface); border: 1px solid var(--accent); border-radius: 14px; padding: 20px; width: 85vw; display: flex; flex-direction: column; gap: 12px; }
+  #edit-box label { font-size: 12px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  #edit-box input { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Source Sans 3', sans-serif; font-size: 16px; padding: 12px 14px; outline: none; }
   #edit-box input:focus { border-color: var(--accent); }
   #edit-actions { display: flex; gap: 8px; }
-  #edit-actions button {
-    flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
+  #edit-actions button { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   #edit-confirm { background: var(--accent); color: var(--bg); font-weight: 600; border-color: var(--accent); }
   #edit-cancel { background: none; color: var(--muted); }
 </style>
@@ -385,7 +313,7 @@
   <div class="btn" data-msg="Luz" data-key="btn3">Luz</div>
   <div class="btn" data-msg="¿Podés llamar a la kinesióloga?" data-key="btn4">Llamar a kinesióloga</div>
   <div class="btn" data-msg="¿Podés llamar al médico?" data-key="btn5">Llamar al médico</div>
-  <div id="attention-btn" class="btn">Timbre</div>
+  <div id="attention-btn" class="btn timbre">Timbre</div>
   <div class="btn" data-msg="Tengo dolor" data-key="btn7">Tengo dolor</div>
 </div>
 
@@ -394,7 +322,6 @@
   <button id="send-custom">→</button>
 </div>
 
-<!-- Log panel -->
 <div id="log-panel" class="panel">
   <div class="panel-header">
     <span>Historial</span>
@@ -404,7 +331,6 @@
   <button id="log-clear">Borrar historial</button>
 </div>
 
-<!-- Nursing panel -->
 <div id="nursing-panel" class="panel">
   <div class="panel-header">
     <span>Enfermería</span>
@@ -422,7 +348,6 @@
   </div>
 </div>
 
-<!-- Message overlay -->
 <div id="overlay">
   <div id="overlay-text"></div>
   <div id="overlay-response">
@@ -431,7 +356,6 @@
   </div>
 </div>
 
-<!-- Edit modal -->
 <div id="edit-modal">
   <div id="edit-box">
     <label>Editar botón (solo esta sesión)</label>
@@ -444,51 +368,22 @@
 </div>
 
 <script>
-  // Attention button - wood knock sound
-  (function() {
-    const btn = document.getElementById('attention-btn');
-    function playKnock() {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++) {
-        const t = i / ctx.sampleRate;
-        data[i] = Math.exp(-t * 40) * (Math.random() * 2 - 1) * 0.8;
-      }
-      const src = ctx.createBufferSource();
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.value = 400;
-      filter.Q.value = 0.8;
-      src.buffer = buf;
-      src.connect(filter);
-      filter.connect(ctx.destination);
-      src.start();
-    }
-    btn.addEventListener('click', () => {
-      playKnock();
-      setTimeout(playKnock, 180);
-    });
-  })();
-    btn0: { label: '¿Cómo te llamás?',           msg: '¿Cómo te llamás?' },
-    btn1: { label: '¿Qué vas a hacer?',           msg: '¿Qué vas a hacer?' },
-    btn2: { label: 'Temperatura',                 msg: 'Temperatura' },
-    btn3: { label: 'Luz',                         msg: 'Luz' },
-    btn4: { label: 'Llamar a kinesióloga',        msg: '¿Podés llamar a la kinesióloga?' },
-    btn5: { label: 'Llamar al médico',            msg: '¿Podés llamar al médico?' },
-    btn6: { label: 'Necesito agua',               msg: 'Necesito agua' },
-    btn7: { label: 'Tengo dolor',                 msg: 'Tengo dolor' }
+  const DEFAULTS = {
+    btn0: { label: '¿Cómo te llamás?',    msg: '¿Cómo te llamás?' },
+    btn1: { label: '¿Qué vas a hacer?',   msg: '¿Qué vas a hacer?' },
+    btn2: { label: 'Temperatura',          msg: 'Temperatura' },
+    btn3: { label: 'Luz',                  msg: 'Luz' },
+    btn4: { label: 'Llamar a kinesióloga', msg: '¿Podés llamar a la kinesióloga?' },
+    btn5: { label: 'Llamar al médico',     msg: '¿Podés llamar al médico?' },
+    btn7: { label: 'Tengo dolor',          msg: 'Tengo dolor' }
   };
   const session = {};
-  function getBtn(key) { return session[key] || DEFAULTS[key]; }
-  function applyLabels() {
-    document.querySelectorAll('.btn').forEach(btn => {
-      const d = getBtn(btn.dataset.key);
-      btn.textContent = d.label;
-      btn.dataset.msg = d.msg;
-    });
-  }
-  applyLabels();
+  function getBtn(k) { return session[k] || DEFAULTS[k]; }
+  document.querySelectorAll('.btn[data-key]').forEach(btn => {
+    const d = getBtn(btn.dataset.key);
+    btn.textContent = d.label;
+    btn.dataset.msg = d.msg;
+  });
 
   // Log
   let log = JSON.parse(localStorage.getItem('comm-log') || '[]');
@@ -497,7 +392,7 @@
     const now = new Date();
     const time = now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
     const date = now.toLocaleDateString('es-AR');
-    log.unshift({msg, response: response||null, time, date, highlight:!!isHighlight, nursing:!!isNursing});
+    log.unshift({msg, response:response||null, time, date, highlight:!!isHighlight, nursing:!!isNursing});
     saveLog();
   }
   function renderLog() {
@@ -511,7 +406,6 @@
       </div>`).join('');
   }
 
-  // Panel helpers
   function openPanel(id) { document.getElementById(id).classList.add('visible'); }
   function closePanel(id) { document.getElementById(id).classList.remove('visible'); }
 
@@ -527,6 +421,30 @@
       btn.classList.add('tapped');
       setTimeout(() => btn.classList.remove('tapped'), 600);
     });
+  });
+
+  // Timbre
+  document.getElementById('attention-btn').addEventListener('click', () => {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    function knock() {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.12, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) {
+        const t = i / ctx.sampleRate;
+        data[i] = Math.exp(-t * 35) * (Math.random() * 2 - 1) * 0.9;
+      }
+      const src = ctx.createBufferSource();
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 350;
+      filter.Q.value = 1;
+      src.buffer = buf;
+      src.connect(filter);
+      filter.connect(ctx.destination);
+      src.start();
+    }
+    knock();
+    setTimeout(knock, 200);
   });
 
   // Overlay
@@ -558,8 +476,8 @@
   }
 
   overlayResponseInput.addEventListener('input', () => { overlayResponseAnswer.textContent = overlayResponseInput.value; });
-  let blockOverlayClick = false;
 
+  let blockOverlayClick = false;
   overlayResponseInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -584,8 +502,7 @@
   }
   overlay.addEventListener('click', () => { if (blockOverlayClick) return; hideOverlay(); });
 
-  // Main buttons
-  document.querySelectorAll('.btn').forEach(btn => {
+  document.querySelectorAll('.btn[data-key]').forEach(btn => {
     let pressTimer = null, didLong = false;
     btn.addEventListener('pointerdown', () => { didLong=false; pressTimer=setTimeout(()=>{didLong=true; openEditModal(btn);},600); });
     btn.addEventListener('pointerup', () => { clearTimeout(pressTimer); pressTimer=null; });
@@ -597,13 +514,11 @@
     });
   });
 
-  // Custom send
   function sendCustom() { const v=customInput.value.trim(); if(v) showMessage(v,true,false); }
   document.getElementById('send-custom').addEventListener('click', sendCustom);
   customInput.addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();sendCustom();} });
   customInput.addEventListener('input', () => { if(customInput.value.includes('\n')){customInput.value=customInput.value.replace(/\n/g,'');sendCustom();} });
 
-  // Edit modal
   const editModal = document.getElementById('edit-modal');
   const editInput = document.getElementById('edit-input');
   let editingBtn = null;
