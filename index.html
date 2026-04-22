@@ -532,7 +532,7 @@
 
   overlayResponseInput.addEventListener('input', () => { overlayResponseAnswer.textContent = overlayResponseInput.value; });
   overlayResponseInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); const v = overlayResponseInput.value.trim(); addLog(currentMsg, v||null, true, false); hideOverlay(); }
+    if (e.key === 'Enter') { e.preventDefault(); const v = overlayResponseInput.value.trim(); addLog(currentMsg, v||null, true, false); currentIsHighlight=false; hideOverlay(); }
   });
   overlayResponseInput.addEventListener('click', e => e.stopPropagation());
 
