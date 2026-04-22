@@ -511,10 +511,10 @@
   const overlayResponseAnswer = document.getElementById('overlay-response-answer');
   const customInput = document.getElementById('custom-input');
   const RESPONSE_KEYS = ['btn0','btn1'];
-  let currentMsg = null, currentIsHighlight = false;
+  let currentMsg = null, currentIsHighlight = false, alreadyLogged = false;
 
   function showMessage(msg, isCustom, isHighlight) {
-    currentMsg = msg; currentIsHighlight = !!isHighlight;
+    currentMsg = msg; currentIsHighlight = !!isHighlight; alreadyLogged = false;
     overlayText.textContent = msg;
     overlayText.classList.toggle('custom', !!isCustom);
     overlay.classList.add('visible');
@@ -527,17 +527,27 @@
     } else {
       overlayResponse.classList.remove('visible');
       addLog(msg, null, false, false);
+      alreadyLogged = true;
     }
   }
 
   overlayResponseInput.addEventListener('input', () => { overlayResponseAnswer.textContent = overlayResponseInput.value; });
   overlayResponseInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); const v = overlayResponseInput.value.trim(); addLog(currentMsg, v||null, true, false); currentIsHighlight=false; hideOverlay(); }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const v = overlayResponseInput.value.trim();
+      addLog(currentMsg, v||null, true, false);
+      alreadyLogged = true;
+      hideOverlay();
+    }
   });
   overlayResponseInput.addEventListener('click', e => e.stopPropagation());
 
   function hideOverlay() {
-    if (currentIsHighlight) { const v = overlayResponseInput.value.trim(); addLog(currentMsg, v||null, true, false); }
+    if (!alreadyLogged && currentIsHighlight) {
+      const v = overlayResponseInput.value.trim();
+      addLog(currentMsg, v||null, true, false);
+    }
     overlay.classList.remove('visible');
     overlayResponse.classList.remove('visible');
     customInput.value = '';
