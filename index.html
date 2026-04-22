@@ -532,13 +532,17 @@
   }
 
   overlayResponseInput.addEventListener('input', () => { overlayResponseAnswer.textContent = overlayResponseInput.value; });
+  let blockOverlayClick = false;
+
   overlayResponseInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       e.preventDefault();
       const v = overlayResponseInput.value.trim();
       addLog(currentMsg, v||null, true, false);
       alreadyLogged = true;
+      blockOverlayClick = true;
       hideOverlay();
+      setTimeout(() => blockOverlayClick = false, 300);
     }
   });
   overlayResponseInput.addEventListener('click', e => e.stopPropagation());
@@ -552,7 +556,7 @@
     overlayResponse.classList.remove('visible');
     customInput.value = '';
   }
-  overlay.addEventListener('click', hideOverlay);
+  overlay.addEventListener('click', () => { if (blockOverlayClick) return; hideOverlay(); });
 
   // Main buttons
   document.querySelectorAll('.btn').forEach(btn => {
