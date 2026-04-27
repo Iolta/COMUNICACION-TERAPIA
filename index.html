@@ -503,6 +503,7 @@
       overlayResponse.classList.remove('visible');
       addLog(msg, null, false, false);
       alreadyLogged = true;
+      setTimeout(() => overlay.focus(), 50);
     }
   }
 
@@ -532,6 +533,8 @@
     customInput.value = '';
   }
   overlay.addEventListener('click', () => { if (blockOverlayClick) return; hideOverlay(); });
+  overlay.addEventListener('keydown', e => { if (e.key === 'Enter' && !currentIsHighlight) { e.preventDefault(); hideOverlay(); } });
+  overlay.setAttribute('tabindex', '0');
 
   document.querySelectorAll('.btn[data-key]').forEach(btn => {
     let pressTimer = null, didLong = false;
