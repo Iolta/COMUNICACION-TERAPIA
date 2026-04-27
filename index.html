@@ -209,7 +209,17 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .nursing-grid {
+  #log-export {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--accent);
+    font-size: 13px;
+    padding: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
@@ -329,6 +339,7 @@
   </div>
   <div id="log-list"></div>
   <button id="log-clear">Borrar historial</button>
+  <button id="log-export">Exportar CSV</button>
 </div>
 
 <div id="nursing-panel" class="panel">
@@ -423,7 +434,27 @@
     });
   });
 
-  // Timbre
+  document.getElementById('log-export').addEventListener('click', () => {
+    if (!log.length) return;
+    const rows = [['Fecha','Hora','Mensaje','Respuesta','Tipo']];
+    log.forEach(e => {
+      rows.push([
+        e.date,
+        e.time,
+        e.msg,
+        e.response || '',
+        e.nursing ? 'Enfermería' : e.highlight ? 'Interacción' : 'General'
+      ]);
+    });
+    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'historial-' + new Date().toLocaleDateString('es-AR').replace(/\//g,'-') + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
   document.getElementById('attention-btn').addEventListener('click', () => {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     function knock() {
