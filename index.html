@@ -547,16 +547,13 @@
 
   function sendCustom() { const v=customInput.value.trim(); if(v) showMessage(v,true,false); }
   document.getElementById('send-custom').addEventListener('click', sendCustom);
-  customInput.addEventListener('keydown', e => { 
-    if(e.key==='Enter'){
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && overlay.classList.contains('visible') && !currentIsHighlight) {
       e.preventDefault();
-      if (overlay.classList.contains('visible')) {
-        hideOverlay();
-      } else {
-        sendCustom();
-      }
+      hideOverlay();
     }
   });
+  customInput.addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();sendCustom();} });
   customInput.addEventListener('input', () => { if(customInput.value.includes('\n')){customInput.value=customInput.value.replace(/\n/g,'');sendCustom();} });
 
   const editModal = document.getElementById('edit-modal');
