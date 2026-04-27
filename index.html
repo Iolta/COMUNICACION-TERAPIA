@@ -360,6 +360,7 @@
 </div>
 
 <div id="overlay">
+  <input id="overlay-focus-trap" style="position:absolute;opacity:0;width:1px;height:1px;top:0;left:0;" type="text">
   <div id="overlay-text"></div>
   <div id="overlay-response">
     <div id="overlay-response-answer"></div>
@@ -503,7 +504,7 @@
       overlayResponse.classList.remove('visible');
       addLog(msg, null, false, false);
       alreadyLogged = true;
-      setTimeout(() => overlay.focus(), 50);
+      setTimeout(() => document.getElementById('overlay-focus-trap').focus(), 50);
     }
   }
 
@@ -550,11 +551,8 @@
 
   function sendCustom() { const v=customInput.value.trim(); if(v) showMessage(v,true,false); }
   document.getElementById('send-custom').addEventListener('click', sendCustom);
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && overlay.classList.contains('visible') && !currentIsHighlight) {
-      e.preventDefault();
-      hideOverlay();
-    }
+  document.getElementById('overlay-focus-trap').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); hideOverlay(); }
   });
   customInput.addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();sendCustom();} });
   customInput.addEventListener('input', () => { if(customInput.value.includes('\n')){customInput.value=customInput.value.replace(/\n/g,'');sendCustom();} });
