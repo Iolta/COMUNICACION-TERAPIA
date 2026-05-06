@@ -272,7 +272,10 @@
 </div>
 
 <div id="staff-panel" class="panel">
-  <div class="panel-header"><span>Equipo Médico</span><button class="panel-close" id="staff-close">✕</button></div>
+  <div class="panel-header">
+    <span>Equipo Médico</span>
+    <button class="panel-close" id="staff-close">✕</button>
+  </div>
   
   <div id="staff-list-container">
     <!-- Acá se cargarán los profesionales -->
@@ -337,7 +340,7 @@
   }
   updateButtons();
 
-  // TTS Logic
+  // TTS Logic (Usa la voz nativa del dispositivo)
   const ttsBtn = document.getElementById('tts-btn');
   ttsBtn.addEventListener('click', () => {
     ttsEnabled = !ttsEnabled;
@@ -354,7 +357,7 @@
     }
   }
 
-  // --- HISTORIAL (Con Fusión Forzada) ---
+  // --- HISTORIAL ---
   let log = [];
   let logNuevoStr = localStorage.getItem('comm-log-v2');
   let logViejoStr = localStorage.getItem('comm-log');
@@ -364,7 +367,6 @@
     log = JSON.parse(logNuevoStr);
   }
 
-  // Si existe el viejo y NO los hemos mezclado todavía, forzamos la unión
   if (logViejoStr && !mergedFlag) {
     let parsedViejo = JSON.parse(logViejoStr);
     let convertedViejo = parsedViejo.map(e => ({
@@ -374,10 +376,9 @@
       type: e.nursing ? 'nursing' : 'general'
     }));
     
-    // Pegamos lo viejo debajo de lo nuevo
     log = log.concat(convertedViejo);
     localStorage.setItem('comm-log-v2', JSON.stringify(log));
-    localStorage.setItem('comm-log-merged', 'true'); // Marcamos que ya se unieron
+    localStorage.setItem('comm-log-merged', 'true');
   }
 
   function addLog(msg, type = 'general') {
@@ -417,7 +418,6 @@
     hablar(msg);
     addLog(msg, 'general');
     
-    // Autocierre después de 3.5 segundos si no lo tocan
     setTimeout(() => {
       if(overlayText.textContent === msg) {
         overlay.classList.remove('visible');
@@ -447,7 +447,7 @@
     if(v) {
       showMessage(v);
       customIn.value = "";
-      customIn.blur(); // Oculta teclado
+      customIn.blur(); 
     }
   }
   document.getElementById('send-custom').addEventListener('click', sendCustom);
@@ -519,14 +519,47 @@
   function renderStaff() {
     const especialidades = Object.keys(staffList);
     if (especialidades.length === 0) {
-      staffContainer.innerHTML = '<div style="color:var(--muted); font-size:13px; text-align:center;">Ningún profesional cargado en este turno.</div>';
+      staffContainer.innerHTML = '<div style="color:var(--muted); font-size:13px; text-align:center;">Ningún profesional cargado.</div>';
       return;
     }
-    staffContainer.innerHTML = especialidades.map(esp => `
-      <div style="font-size: 15px;">
-        <strong style="color:var(--muted);">${esp}:</strong> <span style="color:var(--staff); font-weight:600;">${staffList[esp]}</span>
-      </div>
-    `).join('');
+    
+    let html = '';
+    especialidades.forEach(esp => {
+       const nombres = staffList[esp].split(',').map(n => n.trim()).filter(n => n);
+       if (nombres.length > 0) {
+           html += `<div style="font-size: 14px; margin-bottom: 8px; line-height: 1.8;">
+                      <strong style="color:var(--muted);">${esp}:</strong>`;
+           nombres.forEach(nom => {
+              html += `<span style="display:inline-block; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:2px 8px; margin-left:6px; white-space:nowrap;">
+                         <span style="color:var(--staff); font-weight:600;">${nom}</span>
+                         <span class="del-staff" data-esp="${esp}" data-nom="${nom}" style="color:#a65d5d; cursor:pointer; margin-left:8px; font-size:12px;">✖</span>
+                       </span>`;
+           });
+           html += `</div>`;
+       }
+    });
+    staffContainer.innerHTML = html;
+
+    // Lógica para borrar nombres individuales
+    document.querySelectorAll('.del-staff').forEach(btn => {
+       btn.addEventListener('click', (e) => {
+          const esp = e.target.dataset.esp;
+          const nom = e.target.dataset.nom;
+          if (confirm(`¿Borrar a ${nom} de ${esp}?`)) {
+              let nombres = staffList[esp].split(',').map(n => n.trim()).filter(n => n);
+              nombres = nombres.filter(n => n !== nom);
+              
+              if (nombres.length === 0) {
+                  delete staffList[esp];
+              } else {
+                  staffList[esp] = nombres.join(', ');
+              }
+              
+              localStorage.setItem('comm-staff', JSON.stringify(staffList));
+              renderStaff();
+          }
+       });
+    });
   }
 
   document.getElementById('staff-btn').addEventListener('click', () => { 
@@ -545,21 +578,25 @@
       const nom = staffNameInput.value.trim();
       const especialidad = b.textContent;
       
-      // Si escribiste un nombre, lo guardamos en la libreta visual
+      // Lógica de acumulación de nombres
       if (nom) {
-        staffList[especialidad] = nom;
+        if (staffList[especialidad]) {
+           if (!staffList[especialidad].includes(nom)) {
+              staffList[especialidad] += ', ' + nom;
+           }
+        } else {
+           staffList[especialidad] = nom;
+        }
         localStorage.setItem('comm-staff', JSON.stringify(staffList));
         renderStaff();
       }
 
-      // Dejamos el registro en el historial general
       const mensajeFinal = nom ? `Atención ${especialidad}: ${nom}` : `Llamado: ${especialidad}`;
       addLog(mensajeFinal, 'staff');
       
       document.getElementById('staff-panel').classList.remove('visible');
       staffNameInput.blur(); 
       
-      // Confirmación visual breve
       overlayText.textContent = "Registrado: " + mensajeFinal;
       overlay.classList.add('visible');
       setTimeout(() => overlay.classList.remove('visible'), 2000);
