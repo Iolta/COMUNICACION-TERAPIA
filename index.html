@@ -17,6 +17,7 @@
     --muted: #7a8a7e;
     --accent: #c8d8c2;
     --highlight: #e8c87a;
+    --staff: #7a9be8;
   }
 
   html, body { height: 100%; overflow: hidden; }
@@ -95,6 +96,7 @@
   .btn.timbre { color: var(--muted); border-color: #3a3f3c; }
   .btn.si { border-color: #5a9e78; color: #5a9e78; }
   .btn.no { border-color: #a65d5d; color: #a65d5d; }
+  .btn.staff-opt { border-color: var(--border); color: var(--staff); }
 
   .custom-area {
     display: flex;
@@ -150,14 +152,36 @@
   #log-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
   .log-entry { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 15px; }
   .log-entry.nursing { border-color: #5a9e78; }
+  .log-entry.staff { border-color: var(--staff); }
   .log-time { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
   .log-response { font-size: 16px; color: var(--highlight); margin-top: 4px; font-weight: 600; }
+  
+  .log-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .log-actions button { flex: 1; padding: 10px; background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; font-size: 14px; cursor: pointer; }
+  #log-export { color: var(--accent); border-color: var(--accent); }
 
   .nursing-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     flex: 1;
+    overflow-y: auto;
+  }
+  
+  .staff-input-area {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .staff-input-area input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--staff);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 12px;
+    font-size: 16px;
+    outline: none;
   }
 
   /* Overlay */
@@ -169,25 +193,6 @@
     color: #e8ede9;
     text-align: center;
     padding: 20px;
-  }
-  #overlay-response {
-    display: none;
-    width: 85vw;
-    margin-top: 40px;
-    gap: 10px;
-    flex-direction: column;
-  }
-  #overlay-response.visible { display: flex; }
-  #overlay-response-answer { font-family: 'Lora', serif; font-size: 32px; color: var(--highlight); text-align: center; min-height: 40px; }
-  #overlay-response-input {
-    background: var(--surface);
-    border: 1px solid var(--accent);
-    border-radius: 10px;
-    color: var(--text);
-    padding: 14px;
-    font-size: 18px;
-    text-align: center;
-    outline: none;
   }
 
   /* Modal Edición */
@@ -209,6 +214,7 @@
   <button id="log-btn" class="header-btn">📋</button>
   <h1>Comunicación</h1>
   <div>
+    <button id="staff-btn" class="header-btn">🧑‍⚕️</button>
     <button id="tts-btn" class="header-btn">🔇</button>
     <button id="nursing-btn" class="header-btn">✅</button>
   </div>
@@ -233,13 +239,16 @@
 <div id="log-panel" class="panel">
   <div class="panel-header"><span>Historial</span><button class="panel-close" id="log-close">✕</button></div>
   <div id="log-list"></div>
-  <button id="log-clear" style="padding:10px; background:none; border:1px solid var(--border); color:var(--muted); border-radius:8px;">Borrar Historial</button>
+  <div class="log-actions">
+    <button id="log-clear">Borrar Todo</button>
+    <button id="log-export">Exportar CSV</button>
+  </div>
 </div>
 
 <div id="nursing-panel" class="panel">
   <div class="panel-header"><span>Enfermería</span><button class="panel-close" id="nursing-close">✕</button></div>
   <div class="nursing-grid">
-    <div class="btn nursing-opt">Enfermería</div>
+    <div class="btn nursing-opt">Enfermería general</div>
     <div class="btn nursing-opt">Baño / Higiene</div>
     <div class="btn nursing-opt">Controles</div>
     <div class="btn nursing-opt">Posición</div>
@@ -250,12 +259,25 @@
   </div>
 </div>
 
+<div id="staff-panel" class="panel">
+  <div class="panel-header"><span>Registro Profesionales</span><button class="panel-close" id="staff-close">✕</button></div>
+  <div class="staff-input-area">
+    <input id="staff-name" type="text" placeholder="Nombre del profesional...">
+  </div>
+  <div class="nursing-grid">
+    <div class="btn staff-btn-opt">Médico</div>
+    <div class="btn staff-btn-opt">Residente</div>
+    <div class="btn staff-btn-opt">Kinesiología</div>
+    <div class="btn staff-btn-opt">Enfermería</div>
+    <div class="btn staff-btn-opt">Fonoaudiología</div>
+    <div class="btn staff-btn-opt">Nutrición</div>
+    <div class="btn staff-btn-opt">Cirugía</div>
+    <div class="btn staff-btn-opt">Jefatura Terapia</div>
+  </div>
+</div>
+
 <div id="overlay">
   <div id="overlay-text"></div>
-  <div id="overlay-response">
-    <div id="overlay-response-answer"></div>
-    <input id="overlay-response-input" type="text" placeholder="Respuesta..." maxlength="100">
-  </div>
 </div>
 
 <div id="edit-modal">
@@ -315,67 +337,71 @@
     }
   }
 
-  // Log
-  let log = JSON.parse(localStorage.getItem('comm-log-v2') || '[]');
-  function addLog(msg, resp, isNursing) {
+  // --- HISTORIAL ---
+  let log = [];
+  let logNuevo = localStorage.getItem('comm-log-v2');
+  let logViejo = localStorage.getItem('comm-log');
+
+  if (logNuevo) {
+    log = JSON.parse(logNuevo);
+  } else if (logViejo) {
+    let parsedViejo = JSON.parse(logViejo);
+    log = parsedViejo.map(e => ({
+      msg: e.msg,
+      resp: e.response || null,
+      time: (e.date ? e.date + ' ' : '') + e.time,
+      type: e.nursing ? 'nursing' : 'general'
+    }));
+    localStorage.setItem('comm-log-v2', JSON.stringify(log));
+  }
+
+  function addLog(msg, type = 'general') {
     const now = new Date();
-    const time = now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
-    log.unshift({msg, resp, time, isNursing});
+    const time = now.toLocaleDateString('es-AR') + ' ' + now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
+    log.unshift({msg, resp: null, time, type});
     localStorage.setItem('comm-log-v2', JSON.stringify(log));
   }
 
   function renderLog() {
     const list = document.getElementById('log-list');
-    list.innerHTML = log.map(e => `
-      <div class="log-entry ${e.isNursing?'nursing':''}">
+    if (!log.length) {
+        list.innerHTML = '<div style="color:var(--muted);font-size:14px;text-align:center;margin-top:20px;">No hay mensajes registrados aún.</div>';
+        return;
+    }
+    list.innerHTML = log.map(e => {
+      let classType = '';
+      if(e.type === 'nursing' || e.isNursing) classType = 'nursing';
+      if(e.type === 'staff') classType = 'staff';
+      
+      return `
+      <div class="log-entry ${classType}">
         <div class="log-time">${e.time}</div>
         <div>${e.msg}</div>
         ${e.resp ? `<div class="log-response">↩ ${e.resp}</div>` : ''}
-      </div>
-    `).join('');
+      </div>`
+    }).join('');
   }
 
   // Overlay Management
   const overlay = document.getElementById('overlay');
   const overlayText = document.getElementById('overlay-text');
-  const overlayResp = document.getElementById('overlay-response');
-  const overlayInput = document.getElementById('overlay-response-input');
-  const overlayAnswer = document.getElementById('overlay-response-answer');
-  let currentMsg = "";
 
-  function showMessage(msg, hasInput) {
-    currentMsg = msg;
+  function showMessage(msg) {
     overlayText.textContent = msg;
     overlay.classList.add('visible');
     hablar(msg);
+    addLog(msg, 'general');
     
-    if(hasInput) {
-      overlayAnswer.textContent = "";
-      overlayInput.value = "";
-      overlayResp.classList.add('visible');
-      setTimeout(() => overlayInput.focus(), 200);
-    } else {
-      overlayResp.classList.remove('visible');
-      addLog(msg, null, false);
-    }
+    // Autocierre después de 3.5 segundos si no lo tocan
+    setTimeout(() => {
+      if(overlayText.textContent === msg) {
+        overlay.classList.remove('visible');
+      }
+    }, 3500);
   }
 
-  overlay.addEventListener('click', (e) => {
-    if(e.target === overlay || e.target === overlayText) {
-      if(overlayResp.classList.contains('visible') && overlayInput.value.trim()){
-         addLog(currentMsg, overlayInput.value.trim(), false);
-      }
-      overlay.classList.remove('visible');
-    }
-  });
-
-  overlayInput.addEventListener('input', () => { overlayAnswer.textContent = overlayInput.value; });
-  overlayInput.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') {
-      addLog(currentMsg, overlayInput.value.trim(), false);
-      overlayInput.blur(); // Oculta teclado
-      overlay.classList.remove('visible');
-    }
+  overlay.addEventListener('click', () => {
+    overlay.classList.remove('visible');
   });
 
   // Botones principales
@@ -383,9 +409,9 @@
     let timer;
     btn.addEventListener('pointerdown', () => { timer = setTimeout(() => openEdit(btn), 800); });
     btn.addEventListener('pointerup', () => clearTimeout(timer));
+    btn.addEventListener('pointercancel', () => clearTimeout(timer));
     btn.addEventListener('click', () => {
-        if(btn.dataset.key === 'btn0' || btn.dataset.key === 'btn1') showMessage(btn.dataset.msg, true);
-        else showMessage(btn.dataset.msg, false);
+        showMessage(btn.dataset.msg);
     });
   });
 
@@ -394,7 +420,7 @@
   function sendCustom() {
     const v = customIn.value.trim();
     if(v) {
-      showMessage(v, false);
+      showMessage(v);
       customIn.value = "";
       customIn.blur(); // Oculta teclado
     }
@@ -423,13 +449,62 @@
   document.getElementById('log-close').addEventListener('click', () => document.getElementById('log-panel').classList.remove('visible'));
   document.getElementById('log-clear').addEventListener('click', () => { log = []; localStorage.removeItem('comm-log-v2'); renderLog(); });
   
+  // Exportar Historial
+  document.getElementById('log-export').addEventListener('click', () => {
+    if (!log.length) return;
+    const rows = [['Fecha y Hora', 'Mensaje', 'Respuesta (Antigua)', 'Tipo de Registro']];
+    log.forEach(e => {
+      let tipoTexto = 'General';
+      if(e.type === 'nursing' || e.isNursing) tipoTexto = 'Enfermería';
+      if(e.type === 'staff') tipoTexto = 'Staff Profesional';
+      rows.push([e.time, e.msg, e.resp || '', tipoTexto]);
+    });
+    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'historial-comunicacion-' + new Date().toLocaleDateString('es-AR').replace(/\//g,'-') + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // Panel Enfermería
   document.getElementById('nursing-btn').addEventListener('click', () => document.getElementById('nursing-panel').classList.add('visible'));
   document.getElementById('nursing-close').addEventListener('click', () => document.getElementById('nursing-panel').classList.remove('visible'));
   document.querySelectorAll('.nursing-opt').forEach(b => {
     b.addEventListener('click', () => {
-      addLog(b.textContent, null, true);
+      addLog(b.textContent, 'nursing');
       hablar(b.textContent);
       document.getElementById('nursing-panel').classList.remove('visible');
+    });
+  });
+
+  // Panel Profesionales / Staff
+  const staffNameInput = document.getElementById('staff-name');
+  document.getElementById('staff-btn').addEventListener('click', () => { 
+    staffNameInput.value = ''; // Limpiamos al abrir
+    document.getElementById('staff-panel').classList.add('visible'); 
+  });
+  document.getElementById('staff-close').addEventListener('click', () => {
+    document.getElementById('staff-panel').classList.remove('visible');
+    staffNameInput.blur();
+  });
+  
+  document.querySelectorAll('.staff-btn-opt').forEach(b => {
+    b.addEventListener('click', () => {
+      const nom = staffNameInput.value.trim();
+      const especialidad = b.textContent;
+      const mensajeFinal = nom ? `Atención ${especialidad}: ${nom}` : `Atención ${especialidad}`;
+      
+      addLog(mensajeFinal, 'staff');
+      document.getElementById('staff-panel').classList.remove('visible');
+      staffNameInput.blur(); // Ocultamos el teclado
+      
+      // Opcional: Mostramos en pantalla unos segundos como confirmación visual
+      overlayText.textContent = "Registrado: " + mensajeFinal;
+      overlay.classList.add('visible');
+      setTimeout(() => overlay.classList.remove('visible'), 2000);
     });
   });
 
