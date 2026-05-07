@@ -156,9 +156,10 @@
   .log-time { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
   .log-response { font-size: 16px; color: var(--highlight); margin-top: 4px; font-weight: 600; }
   
-  .log-actions { display: flex; gap: 8px; margin-top: 10px; }
-  .log-actions button { flex: 1; padding: 10px; background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; font-size: 14px; cursor: pointer; }
+  .log-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .log-actions button { flex: 1; min-width: 30%; padding: 10px 4px; background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; font-size: 13px; cursor: pointer; text-align: center; }
   #log-export { color: var(--accent); border-color: var(--accent); }
+  #log-import-btn { color: var(--staff); border-color: var(--staff); }
 
   .nursing-grid {
     display: grid;
@@ -252,8 +253,10 @@
   <div class="panel-header"><span>Historial</span><button class="panel-close" id="log-close">✕</button></div>
   <div id="log-list"></div>
   <div class="log-actions">
-    <button id="log-clear">Borrar Todo</button>
-    <button id="log-export">Exportar CSV</button>
+    <button id="log-clear">Borrar</button>
+    <button id="log-export">Exportar</button>
+    <button id="log-import-btn">Importar CSV</button>
+    <input type="file" id="log-import-file" accept=".csv" style="display:none;">
   </div>
 </div>
 
@@ -278,7 +281,8 @@
   </div>
   
   <div id="staff-list-container">
-    </div>
+    <!-- Acá se cargarán los profesionales -->
+  </div>
 
   <div class="staff-input-area">
     <input id="staff-name" type="text" placeholder="Actualizar/Agregar nombre...">
@@ -416,11 +420,8 @@
     overlay.classList.add('visible');
     hablar(msg);
     addLog(msg, 'general');
-    
-    // NOTA: Se eliminó el auto-cierre para que el mensaje quede fijo hasta que toques la pantalla.
   }
 
-  // Cierre manual al tocar la pantalla
   overlay.addEventListener('click', () => {
     overlay.classList.remove('visible');
   });
@@ -494,6 +495,67 @@
     a.download = 'historial-comunicacion-' + new Date().toLocaleDateString('es-AR').replace(/\//g,'-') + '.csv';
     a.click();
     URL.revokeObjectURL(url);
+  });
+
+  // --- IMPORTAR HISTORIAL ---
+  document.getElementById('log-import-btn').addEventListener('click', () => {
+    document.getElementById('log-import-file').click();
+  });
+
+  document.getElementById('log-import-file').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const csvData = event.target.result;
+      const rows = csvData.split('\n');
+      const importedLog = [];
+      
+      // Empezamos en 1 para saltear la fila de títulos
+      for (let i = 1; i < rows.length; i++) {
+        let row = rows[i].trim();
+        if (!row) continue;
+        
+        let cols = [];
+        let inQuotes = false;
+        let current = '';
+        for(let char of row) {
+          if (char === '"') inQuotes = !inQuotes;
+          else if (char === ',' && !inQuotes) {
+            cols.push(current);
+            current = '';
+          } else {
+            current += char;
+          }
+        }
+        cols.push(current);
+
+        // Limpiar comillas extras del exportado
+        cols = cols.map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"'));
+
+        if (cols.length >= 4) {
+          let time = cols[0];
+          let msg = cols[1];
+          let resp = cols[2] || null;
+          let tipoTexto = cols[3];
+          
+          let type = 'general';
+          if (tipoTexto === 'Enfermería') type = 'nursing';
+          if (tipoTexto === 'Staff Profesional') type = 'staff';
+
+          importedLog.push({msg, resp, time, type});
+        }
+      }
+
+      // Sumamos lo importado al historial actual (lo importado va al final porque es más viejo)
+      log = log.concat(importedLog);
+      localStorage.setItem('comm-log-v2', JSON.stringify(log));
+      renderLog();
+      e.target.value = ''; // Limpiamos el input
+      alert('¡Historial recuperado con éxito!');
+    };
+    reader.readAsText(file);
   });
 
   // Panel Enfermería
@@ -593,8 +655,6 @@
       document.getElementById('staff-panel').classList.remove('visible');
       staffNameInput.blur(); 
       
-      // La confirmación visual de registro dura solo 2 segundos para no molestar,
-      // pero el mensaje grande de comunicación queda fijo.
       overlayText.textContent = "Registrado: " + mensajeFinal;
       overlay.classList.add('visible');
       setTimeout(() => {
