@@ -256,7 +256,7 @@
     <button id="log-clear">Borrar</button>
     <button id="log-export">Exportar</button>
     <button id="log-import-btn">Importar CSV</button>
-    <input type="file" id="log-import-file" accept=".csv" style="display:none;">
+    <input type="file" id="log-import-file" accept=".csv, text/csv, application/vnd.ms-excel, text/plain, */*" style="display:none;">
   </div>
 </div>
 
@@ -655,6 +655,8 @@
       document.getElementById('staff-panel').classList.remove('visible');
       staffNameInput.blur(); 
       
+      // La confirmación visual de registro dura solo 2 segundos para no molestar,
+      // pero el mensaje grande de comunicación queda fijo.
       overlayText.textContent = "Registrado: " + mensajeFinal;
       overlay.classList.add('visible');
       setTimeout(() => {
