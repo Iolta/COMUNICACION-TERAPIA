@@ -278,8 +278,7 @@
   </div>
   
   <div id="staff-list-container">
-    <!-- Acá se cargarán los profesionales -->
-  </div>
+    </div>
 
   <div class="staff-input-area">
     <input id="staff-name" type="text" placeholder="Actualizar/Agregar nombre...">
@@ -340,7 +339,7 @@
   }
   updateButtons();
 
-  // TTS Logic (Usa la voz nativa del dispositivo)
+  // TTS Logic
   const ttsBtn = document.getElementById('tts-btn');
   ttsBtn.addEventListener('click', () => {
     ttsEnabled = !ttsEnabled;
@@ -418,13 +417,10 @@
     hablar(msg);
     addLog(msg, 'general');
     
-    setTimeout(() => {
-      if(overlayText.textContent === msg) {
-        overlay.classList.remove('visible');
-      }
-    }, 3500);
+    // NOTA: Se eliminó el auto-cierre para que el mensaje quede fijo hasta que toques la pantalla.
   }
 
+  // Cierre manual al tocar la pantalla
   overlay.addEventListener('click', () => {
     overlay.classList.remove('visible');
   });
@@ -597,9 +593,15 @@
       document.getElementById('staff-panel').classList.remove('visible');
       staffNameInput.blur(); 
       
+      // La confirmación visual de registro dura solo 2 segundos para no molestar,
+      // pero el mensaje grande de comunicación queda fijo.
       overlayText.textContent = "Registrado: " + mensajeFinal;
       overlay.classList.add('visible');
-      setTimeout(() => overlay.classList.remove('visible'), 2000);
+      setTimeout(() => {
+        if(overlayText.textContent.startsWith("Registrado:")) {
+          overlay.classList.remove('visible');
+        }
+      }, 2000);
     });
   });
 
