@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Comunicación</title>
+<title>Comunicación CAA</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Source+Sans+3:wght@400;600&display=swap');
 
@@ -197,6 +197,42 @@
     outline: none;
   }
 
+  /* Info Panel Styles */
+  #info-content {
+    flex: 1;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .info-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .info-box h3 { color: var(--accent); margin-bottom: 8px; font-size: 16px; }
+  .info-box ul { margin-left: 20px; color: var(--muted); }
+  .info-box a { color: var(--staff); text-decoration: none; font-weight: 600; }
+  
+  .wakelock-btn {
+    width: 100%;
+    padding: 12px;
+    background: none;
+    border: 1px solid #e8c87a;
+    color: #e8c87a;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 10px;
+  }
+  .wakelock-btn.active { background: #1f1d13; }
+
   /* Overlay */
   #overlay { display: none; position: fixed; inset: 0; background: #0a0c0b; z-index: 600; }
   #overlay.visible { display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -227,6 +263,7 @@
   <button id="log-btn" class="header-btn">📋</button>
   <h1>Comunicación</h1>
   <div>
+    <button id="info-btn" class="header-btn">ℹ️</button>
     <button id="staff-btn" class="header-btn">🧑‍⚕️</button>
     <button id="tts-btn" class="header-btn">🔇</button>
     <button id="nursing-btn" class="header-btn">✅</button>
@@ -249,6 +286,36 @@
   <button id="send-custom">→</button>
 </div>
 
+<!-- Info Panel -->
+<div id="info-panel" class="panel">
+  <div class="panel-header"><span>Acerca de la App</span><button class="panel-close" id="info-close">✕</button></div>
+  <div id="info-content">
+    
+    <button id="wakelock-btn" class="wakelock-btn">💡 Mantener pantalla encendida: OFF</button>
+
+    <div class="info-box">
+      <h3>Instrucciones de Uso</h3>
+      <ul>
+        <li><strong>Voz:</strong> Activá el ícono 🔇 arriba a la derecha para que la app lea los mensajes en voz alta.</li>
+        <li><strong>Personalizar botones:</strong> Mantené presionado cualquier botón de la pantalla principal durante un segundo para cambiar su texto.</li>
+        <li><strong>Teclado rápido:</strong> Usá la barra de abajo para escribir textos libres y envialos con la flecha.</li>
+        <li><strong>Registro de Profesionales (🧑‍⚕️):</strong> Escribí el nombre de quien te atiende y tocá su especialidad para sumarlo a tu equipo del día.</li>
+      </ul>
+    </div>
+
+    <div class="info-box">
+      <h3>Contacto y Soporte</h3>
+      <p style="color:var(--muted); margin-bottom:10px;">Este es un proyecto gratuito y de código abierto creado desde mi propia internación con el objetivo de facilitar la comunicación.</p>
+      <p><strong>¿Encontraste un error o querés proponer una mejora?</strong></p>
+      <a href="mailto:profesorcarlosvidal@gmail.com">👉 Enviar un correo</a>
+      <br><br>
+      <p style="font-size: 12px; color:var(--muted);">Nota: Leo las sugerencias, pero tené en cuenta que el soporte no es inmediato, ya que dependo de mi disponibilidad y proceso de recuperación.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- Log Panel -->
 <div id="log-panel" class="panel">
   <div class="panel-header"><span>Historial</span><button class="panel-close" id="log-close">✕</button></div>
   <div id="log-list"></div>
@@ -280,9 +347,7 @@
     <button class="panel-close" id="staff-close">✕</button>
   </div>
   
-  <div id="staff-list-container">
-    <!-- Acá se cargarán los profesionales -->
-  </div>
+  <div id="staff-list-container"></div>
 
   <div class="staff-input-area">
     <input id="staff-name" type="text" placeholder="Actualizar/Agregar nombre...">
@@ -325,7 +390,7 @@
     btn3: { label: 'NO', msg: 'NO' },
     btn4: { label: 'Kinesióloga', msg: '¿Podés llamar a la kinesióloga?' },
     btn5: { label: 'Médico', msg: '¿Podés llamar al médico?' },
-    btn7: { label: 'No sé / Tal vez', msg: 'No sé / Tal vez' }
+    btn7: { label: 'Tengo dolor', msg: 'Tengo dolor' }
   };
 
   let session = JSON.parse(localStorage.getItem('comm-btns') || '{}');
@@ -359,6 +424,41 @@
       window.speechSynthesis.speak(m);
     }
   }
+
+  // --- WAKE LOCK (Mantener pantalla encendida) ---
+  let wakeLock = null;
+  const wakeLockBtn = document.getElementById('wakelock-btn');
+
+  async function toggleWakeLock() {
+    if (!('wakeLock' in navigator)) {
+      alert("Tu navegador no soporta mantener la pantalla encendida automáticamente.");
+      return;
+    }
+    try {
+      if (wakeLock !== null) {
+        await wakeLock.release();
+        wakeLock = null;
+        wakeLockBtn.textContent = '💡 Mantener pantalla encendida: OFF';
+        wakeLockBtn.classList.remove('active');
+      } else {
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLockBtn.textContent = '💡 Mantener pantalla encendida: ON';
+        wakeLockBtn.classList.add('active');
+        
+        wakeLock.addEventListener('release', () => {
+          if(wakeLockBtn.classList.contains('active')) {
+             wakeLockBtn.textContent = '💡 Mantener pantalla encendida: OFF';
+             wakeLockBtn.classList.remove('active');
+             wakeLock = null;
+          }
+        });
+      }
+    } catch (err) {
+      console.error(`${err.name}, ${err.message}`);
+    }
+  }
+
+  wakeLockBtn.addEventListener('click', toggleWakeLock);
 
   // --- HISTORIAL ---
   let log = [];
@@ -411,7 +511,7 @@
     }).join('');
   }
 
-  // Overlay Management
+  // Overlay Management 
   const overlay = document.getElementById('overlay');
   const overlayText = document.getElementById('overlay-text');
 
@@ -466,7 +566,10 @@
     osc.stop(ctx.currentTime + 0.5);
   });
 
-  // Paneles Generales
+  // Paneles
+  document.getElementById('info-btn').addEventListener('click', () => document.getElementById('info-panel').classList.add('visible'));
+  document.getElementById('info-close').addEventListener('click', () => document.getElementById('info-panel').classList.remove('visible'));
+
   document.getElementById('log-btn').addEventListener('click', () => { renderLog(); document.getElementById('log-panel').classList.add('visible'); });
   document.getElementById('log-close').addEventListener('click', () => document.getElementById('log-panel').classList.remove('visible'));
   document.getElementById('log-clear').addEventListener('click', () => { 
@@ -512,7 +615,6 @@
       const rows = csvData.split('\n');
       const importedLog = [];
       
-      // Empezamos en 1 para saltear la fila de títulos
       for (let i = 1; i < rows.length; i++) {
         let row = rows[i].trim();
         if (!row) continue;
@@ -531,7 +633,6 @@
         }
         cols.push(current);
 
-        // Limpiar comillas extras del exportado
         cols = cols.map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"'));
 
         if (cols.length >= 4) {
@@ -548,11 +649,10 @@
         }
       }
 
-      // Sumamos lo importado al historial actual (lo importado va al final porque es más viejo)
       log = log.concat(importedLog);
       localStorage.setItem('comm-log-v2', JSON.stringify(log));
       renderLog();
-      e.target.value = ''; // Limpiamos el input
+      e.target.value = ''; 
       alert('¡Historial recuperado con éxito!');
     };
     reader.readAsText(file);
@@ -598,7 +698,6 @@
     });
     staffContainer.innerHTML = html;
 
-    // Lógica para borrar nombres individuales
     document.querySelectorAll('.del-staff').forEach(btn => {
        btn.addEventListener('click', (e) => {
           const esp = e.target.dataset.esp;
@@ -636,7 +735,6 @@
       const nom = staffNameInput.value.trim();
       const especialidad = b.textContent;
       
-      // Lógica de acumulación de nombres
       if (nom) {
         if (staffList[especialidad]) {
            if (!staffList[especialidad].includes(nom)) {
@@ -655,8 +753,6 @@
       document.getElementById('staff-panel').classList.remove('visible');
       staffNameInput.blur(); 
       
-      // La confirmación visual de registro dura solo 2 segundos para no molestar,
-      // pero el mensaje grande de comunicación queda fijo.
       overlayText.textContent = "Registrado: " + mensajeFinal;
       overlay.classList.add('visible');
       setTimeout(() => {
