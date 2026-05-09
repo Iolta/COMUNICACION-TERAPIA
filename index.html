@@ -53,13 +53,20 @@
     flex: 1;
   }
 
+  .header-right {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4px;
+    align-items: center;
+  }
+
   .header-btn {
     background: none;
     border: none;
     color: var(--muted);
     font-size: 18px;
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 4px 6px;
     -webkit-tap-highlight-color: transparent;
   }
   
@@ -151,7 +158,7 @@
 
   #log-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
   .log-entry { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 15px; }
-  .log-entry.nursing { border-color: #5a9e78; }
+  .log-entry.nursing { border-color: #5a9e78; } /* Mantenido para historial viejo */
   .log-entry.staff { border-color: var(--staff); }
   .log-time { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
   .log-response { font-size: 16px; color: var(--highlight); margin-top: 4px; font-weight: 600; }
@@ -161,7 +168,7 @@
   #log-export { color: var(--accent); border-color: var(--accent); }
   #log-import-btn { color: var(--staff); border-color: var(--staff); }
 
-  .nursing-grid {
+  .options-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
@@ -262,11 +269,10 @@
 <div class="header">
   <button id="log-btn" class="header-btn">📋</button>
   <h1>Comunicación</h1>
-  <div>
+  <div class="header-right">
     <button id="info-btn" class="header-btn">ℹ️</button>
     <button id="staff-btn" class="header-btn">🧑‍⚕️</button>
     <button id="tts-btn" class="header-btn">🔇</button>
-    <button id="nursing-btn" class="header-btn">✅</button>
   </div>
 </div>
 
@@ -327,20 +333,6 @@
   </div>
 </div>
 
-<div id="nursing-panel" class="panel">
-  <div class="panel-header"><span>Enfermería</span><button class="panel-close" id="nursing-close">✕</button></div>
-  <div class="nursing-grid">
-    <div class="btn nursing-opt">Enfermería general</div>
-    <div class="btn nursing-opt">Baño / Higiene</div>
-    <div class="btn nursing-opt">Controles</div>
-    <div class="btn nursing-opt">Posición</div>
-    <div class="btn nursing-opt">Muestra</div>
-    <div class="btn nursing-opt">Medicación</div>
-    <div class="btn nursing-opt">Suero / Vía</div>
-    <div class="btn nursing-opt">Signos</div>
-  </div>
-</div>
-
 <div id="staff-panel" class="panel">
   <div class="panel-header">
     <span>Equipo Médico</span>
@@ -352,7 +344,7 @@
   <div class="staff-input-area">
     <input id="staff-name" type="text" placeholder="Actualizar/Agregar nombre...">
   </div>
-  <div class="nursing-grid">
+  <div class="options-grid">
     <div class="btn staff-btn-opt">Médico</div>
     <div class="btn staff-btn-opt">Residente</div>
     <div class="btn staff-btn-opt">Kinesiología</div>
@@ -656,17 +648,6 @@
       alert('¡Historial recuperado con éxito!');
     };
     reader.readAsText(file);
-  });
-
-  // Panel Enfermería
-  document.getElementById('nursing-btn').addEventListener('click', () => document.getElementById('nursing-panel').classList.add('visible'));
-  document.getElementById('nursing-close').addEventListener('click', () => document.getElementById('nursing-panel').classList.remove('visible'));
-  document.querySelectorAll('.nursing-opt').forEach(b => {
-    b.addEventListener('click', () => {
-      addLog(b.textContent, 'nursing');
-      hablar(b.textContent);
-      document.getElementById('nursing-panel').classList.remove('visible');
-    });
   });
 
   // --- PANEL EQUIPO MÉDICO (STAFF) ---
